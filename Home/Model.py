@@ -18,20 +18,25 @@ class EtabsModel:
 
     def connect_to_existing_file(self) -> str:
         """ If an Etabs file is in the process this method will connect the app to that and return the path of its file"""
+        print('miakham connect sham')
         try:
             self.myETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
             self.success = True
             self.SapModel = self.myETABSObject.SapModel
+            print('try')
         except (OSError, comtypes.COMError):
             self.success = False
+            print('exept')
             # sys.exit(-1)
-
+        print(f'self my etabsobject ine {self.myETABSObject}')
         if self.myETABSObject is None:
+            print('helper sakhyam')
             helper = comtypes.client.CreateObject('ETABSv1.Helper')
             print(f'helper is {helper}')
             helper = helper.QueryInterface(comtypes.gen.ETABSv1.cHelper)
 
             if hasattr(helper, 'GetObjectProcess'):
+                print('helperam attr dare')
                 try:
                     import psutil
                 except ImportError:
@@ -48,13 +53,14 @@ class EtabsModel:
                         break
 
                 if pid:
+                    print('pid daram')
                     self.myETABSObject = helper.GetObjectProcess("CSI.ETABS.API.ETABSObject", pid)
                     self.success = True
-                    self.SapModel = self.myETABSObject.SapModel
-                    self.name = Path(self.SapModel.GetModelFilename())
-                    return self.name
-        else:
-            pass
+        self.SapModel = self.myETABSObject.SapModel
+        self.name = Path(self.SapModel.GetModelFilename())
+        return self.name
+        # else:
+        #     pass
 
     def open_file(self):
         # create API helper object
@@ -80,10 +86,10 @@ class EtabsModel:
         self.SapModel.File.OpenFile(str(self.ModelPath))
 
     def run_file(self):
-        self.SapModel.SetModelIsLocked(False)
+        # self.SapModel.SetModelIsLocked(False)
         # run model (this will create the analysis model)
         print('Run......')
-        ret = self.SapModel.Analyze.RunAnalysis()
+        # ret = self.SapModel.Analyze.RunAnalysis()
 
     def get_file_path(self):
         self.path = Path(self.SapModel.GetModelFilename()).parent
@@ -149,5 +155,5 @@ class EtabsModel:
     
     def drift_data(self):
         table_key = DriftModel.drift_data
-        drift_datafram = self.get_data_table_outputs(table_key=table_key)
+        drift_dataframe = self.get_data_table_outputs(table_key=table_key)
         

@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow,  QTableWidgetItem
+from PyQt6.QtWidgets import QApplication, QMainWindow,  QTableWidgetItem, QListWidgetItem, QListWidget
 from PyQt6.QtCore import pyqtSlot
 import sys
 from pathlib import Path
@@ -44,21 +44,27 @@ class ETABSDrift:
 
     # use loads and fill the load list
     def load_window(self, drift_data: list):
-        if self.name:
-            # self.fltdrfload = list(filtering(drift_data, ("W", "EQ", "SPEC")))
-            self.window.load_case_list.addItems(drift_data)
-            
-            # self.etabs.select_load_cases(fltdrfload)
 
-    def drift_table(self, etabs):
+        for index, value in enumerate(drift_data):
+            # self.window.load_case_list.insertItem(index, value)
+            item = QListWidgetItem(value)
+            self.window.load_case_list.addItem(item)
+            print(value)
+   
+        
+        
+        
+        # self.etabs.select_load_cases(fltdrfload)
+
+    def drift_table(self, etabsobj):
 
         self.driftload = self.window.load_case_list.currentItem()
-        print(self.driftload)
+        print(f'drift table inja \n\n\n\n\n{self.driftload}')
         selected_load = self.driftload.text()
         selected_table = self.window.drift_or_dis
-
-        story_drifts_table = etabs.get_data_table_outputs(table_key=selected_table)
-
+        print('ghable get outpu')
+        story_drifts_table = etabsobj.get_data_table_outputs(table_key=selected_table)
+        print('bade get output')
         # query desiered columns
         load_drift = story_drifts_table[story_drifts_table.OutputCase == selected_load]
         print(load_drift)
