@@ -3,7 +3,8 @@ from PyQt6.QtCore import pyqtSlot
 import sys
 from pathlib import Path
 import Home.Model as etabs
-from Drift.View import UI, DriftWindow
+from Home.View import UI
+from Drift.View import DriftWindow
 import os
 import numpy as np
 import pandas as pd

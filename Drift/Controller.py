@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 import Drift.Model as etabs
 # import Drift.View
-from Drift.View import DriftWindow, UI
+from Drift.View import DriftWindow
 import os
 import numpy as np
 import pandas as pd
@@ -159,7 +159,7 @@ class ETABSDrift:
         self.window.drift_plot.setLabel('bottom', self.tableitem)
         self.window.drift_plot.setXRange(0, 0.003)
         self.window.drift_plot.setYRange(0, 7)
-        self.window.drift_plot.setAxisItems(axisItems = {'left':stringaxis})
+        self.window.drift_plot.setAxisItems(axisItems={'left': stringaxis})
         self.window.drift_plot.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X' )
         self.window.drift_plot.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
         self.window.drift_plot.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')

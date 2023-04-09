@@ -1,23 +1,5 @@
-import inspect
-import os
-import sys
-
-# current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-# parent_dir = os.path.dirname(current_dir)
-# sys.path.insert(0, parent_dir)
-
-# import sys
-# from pathlib import Path
-
-# file = Path(__file__).resolve()
-# package_root_directory = file.parents[1]
-# sys.path.append(str(package_root_directory))
-
-# sys.path.append("..")
-
-
 if __name__ == '__main__':
-    
+
     import Home.Controller as etabs
     drift = etabs.ETABS()
     # Main().run
