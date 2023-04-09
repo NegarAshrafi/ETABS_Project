@@ -10,7 +10,9 @@ import numpy as np
 import pandas as pd
 import pyqtgraph as pg
 import json
-# from ..functions import filtering
+from openpyxl import Workbook
+from openpyxl.worksheet.table import Table, TableStyleInfo
+import ETABS_Project.functions as func
 # from Home.Controller import ETABS
 
 
@@ -113,15 +115,15 @@ class ETABSDrift:
         # repace Nan values with zero
         self.load_table_xy.fillna(0, inplace=True)
         self.temp = self.load_table_xy
-        row_no = self.load_table_xy['X'].size
+        self.row_no = self.load_table_xy['X'].size
 
-        if row_no == 0:
+        if self.row_no == 0:
             self.error_on_drifttable()
         else:
             self.window.result_table.setColumnCount(3)
-            self.window.result_table.setRowCount(row_no)
+            self.window.result_table.setRowCount(self.row_no)
 
-            for row in range(row_no):
+            for row in range(self.row_no):
                 for col in range(3):
                     litem = self.load_table_xy.iloc[row][col]
                     self.window.result_table.setItem(row, col, QTableWidgetItem(litem))
@@ -164,10 +166,54 @@ class ETABSDrift:
         self.window.drift_plot.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
         self.window.drift_plot.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')
 
+        self.export_drift_xls()
 
-# app = QApplication(sys.argv)
-# etabs1 = ETABS()
-# sys.exit(app.exec())
-# window = etabs1
-# window.show()
-# app.exec()
+    def export_drift_xls(self):
+
+        # workbook = Workbook()
+        # active_wb = workbook.active
+        # active_wb.append(['Story', 'X', 'Y'])
+
+        # for rowindex in range(self.row_no):
+        #     row = list(self.load_table_xy.iloc[rowindex])
+        #     active_wb.append(row)
+        #     print(row)
+
+        # tab = Table(displayName='Drift_Control')
+        # style = TableStyleInfo(name="TableStyleMedium9" ,showFirstColumn=True ,showLastColumn=True ,showColumnStripes=True)
+        # tab.tableStyleInfo = style
+        # active_wb.add_table(tab)
+ 
+        # workbook.save(filename="Drift_Control.xlsx")
+
+        wb = Workbook()
+        ws = wb.active
+
+        ws.append(['Story', 'X', 'Y'])
+
+        for rowindex in range(self.row_no):
+            row = list(self.load_table_xy.iloc[rowindex])
+            ws.append(row)
+            print(row)
+
+        ref=func.rowcol_to_xlsxcell(1,1,3,self.row_no+1)
+        tab = Table(displayName="Table1", ref=ref)
+
+        # Add a default style with striped rows and banded columns
+        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
+                            showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+        tab.tableStyleInfo = style
+
+        '''
+        Table must be added using ws.add_table() method to avoid duplicate names.
+        Using this method ensures table name is unque through out defined names and all other table name. 
+        '''
+        ws.add_table(tab)
+        wb.save("table.xlsx")
+
+        # app = QApplication(sys.argv)
+        # etabs1 = ETABS()
+        # sys.exit(app.exec())
+        # window = etabs1
+        # window.show()
+        # app.exec()
