@@ -165,55 +165,27 @@ class ETABSDrift:
         self.window.drift_plot.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X' )
         self.window.drift_plot.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
         self.window.drift_plot.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')
-
         self.export_drift_xls()
 
     def export_drift_xls(self):
-
-        # workbook = Workbook()
-        # active_wb = workbook.active
-        # active_wb.append(['Story', 'X', 'Y'])
-
-        # for rowindex in range(self.row_no):
-        #     row = list(self.load_table_xy.iloc[rowindex])
-        #     active_wb.append(row)
-        #     print(row)
-
-        # tab = Table(displayName='Drift_Control')
-        # style = TableStyleInfo(name="TableStyleMedium9" ,showFirstColumn=True ,showLastColumn=True ,showColumnStripes=True)
-        # tab.tableStyleInfo = style
-        # active_wb.add_table(tab)
- 
-        # workbook.save(filename="Drift_Control.xlsx")
 
         wb = Workbook()
         ws = wb.active
 
         ws.append(['Story', 'X', 'Y'])
 
+        # fill data of dirfts to excel table by making list
         for rowindex in range(self.row_no):
             row = list(self.load_table_xy.iloc[rowindex])
             ws.append(row)
-            print(row)
 
-        ref=func.rowcol_to_xlsxcell(1,1,3,self.row_no+1)
+        # use local module to named excell cells with rows and cols number
+        ref = func.rowcol_to_xlsxcell(1,1,3,self.row_no+1)
         tab = Table(displayName="Table1", ref=ref)
 
-        # Add a default style with striped rows and banded columns
         style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
                             showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+        
         tab.tableStyleInfo = style
-
-        '''
-        Table must be added using ws.add_table() method to avoid duplicate names.
-        Using this method ensures table name is unque through out defined names and all other table name. 
-        '''
         ws.add_table(tab)
-        wb.save("table.xlsx")
-
-        # app = QApplication(sys.argv)
-        # etabs1 = ETABS()
-        # sys.exit(app.exec())
-        # window = etabs1
-        # window.show()
-        # app.exec()
+        wb.save("Drift_Check.xlsx")
