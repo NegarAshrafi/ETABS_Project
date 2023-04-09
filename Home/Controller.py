@@ -113,33 +113,17 @@ class ETABS(QMainWindow):
             self.window.show()
 
     def drift_check(self):
-        print('drift checkkkkkkkkk')
 
         # fltrdload = functions.filtering(self.etabs_load, ("W", "EQ", "SPEC"))
-        
         dataframe = self.etabs.get_data_table_outputs()
-        print(f'data frame ine {dataframe} ')
         fltrdloads = list(filter(lambda x:  x.startswith(("W", "EQ", "SPEC")), self.etabs_load))
         self.drift_control.load_window(fltrdloads)
         self.etabs.select_load_cases(fltrdloads)
-        print(f'load windo {fltrdloads}')
-        
-        
+
         # self.view.driftbtn.clicked.connect(self.toggle_window)
         self.window.select_load_btn.clicked.connect(lambda: self.drift_control.drift_table(self))
         # self.drift_control.error_on_drifttable()
         self.window.select_load_btn.clicked.connect(self.drift_control.graph)
-        print('bade keshidane graph')
-
-
-
-    # def filter_load(self, list, prefix: tuple) -> list:
-    #     """
-    #     give a list of strings and a tuple of prefix, filtered the list
-    #     by items started with prefix
-    #     """
-    #     self.filtered_loads = filter(lambda x:  x.startswith(prefix), list)
-    #     return self.filtered_loads
 
 
 app = QApplication(sys.argv)

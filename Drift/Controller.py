@@ -43,7 +43,7 @@ class ETABSDrift:
         # self.load_window()
         # self.window.select_load_btn.clicked.connect(self.drift_table)
         # self.window.select_load_btn.clicked.connect(self.graph)
-            # self.window.select_load_btn.clicked.connect(self.graph)
+        # self.window.select_load_btn.clicked.connect(self.graph)
 
     
 
@@ -62,10 +62,8 @@ class ETABSDrift:
         for n in range(len(drift_data)):
             
             lqitem = drift_data[n]
-            self.window.load_case_table.setItem(n, 0 , QTableWidgetItem(lqitem))
+            self.window.load_case_table.setItem(n ,0 ,QTableWidgetItem(lqitem))
             print(lqitem)
-        
-       
         
         # self.etabs.select_load_cases(fltdrfload)
 
@@ -73,16 +71,13 @@ class ETABSDrift:
 
         # self.driftload = self.window.load_case_list.currentItem()
         self.driftload = "SPECXY_ND"
-        print(f'drift table inja \n\n\n\n\n{self.driftload}')
         # selected_load = self.driftload.text()
         selected_load = self.driftload
         selected_table = self.window.drift_or_dis
-        print('ghable get outpu')
         story_drifts_table = etabsobj.etabs.get_data_table_outputs(table_key=selected_table)
-        print('bade get output')
         # query desiered columns
         load_drift = story_drifts_table[story_drifts_table.OutputCase == selected_load]
-        print(load_drift)
+
         if selected_table == 'Story Drifts':
             load_table = load_drift[['Story', 'Direction', 'Drift']]
             kvalue = "Drift"
@@ -91,12 +86,9 @@ class ETABSDrift:
             load_table = load_drift[['Story', 'Direction', 'Maximum']]
             kvalue = "Maximum"
             self.tableitem = 'Displacement'
-        print(load_table)
 
         # pivot load table to transfer Direction column to X and Y column
-
         self.load_table_xy = load_table.pivot(columns="Direction", values=kvalue, index='Story')
-        print(f'load table xy ine \n\n\n{self.load_table_xy}\n\n\n')
         
         # check if there is not any Y load make a new column calls Y with 0 values
         if "Y" not in self. load_table_xy.columns:
@@ -114,7 +106,7 @@ class ETABSDrift:
         # reset index change previous index to 0-1-2-3-.... and use previouse index as a column
         self.load_table_xy.reset_index(inplace=True)
 
-        # repace Nan values with zero
+        # replace Nan values with zero
         self.load_table_xy.fillna(0, inplace=True)
         self.temp = self.load_table_xy
         self.row_no = self.load_table_xy['X'].size
@@ -173,7 +165,6 @@ class ETABSDrift:
 
         wb = Workbook()
         ws = wb.active
-
         ws.append(['Story', 'X', 'Y'])
 
         # fill data of dirfts to excel table by making list
@@ -187,16 +178,9 @@ class ETABSDrift:
 
         style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
                             showLastColumn=False, showRowStripes=True, showColumnStripes=True)
-        
+
         tab.tableStyleInfo = style
         ws.add_table(tab)
-        
-
-        # first = FormatObject(type='min')
-        # mid = FormatObject(type='mid')
-        # last = FormatObject(type='max')
-
-        # colors = [Color('AA0000'), Color('00AA00'), Color('0000AA')]
 
         rule = ColorScaleRule(start_type='num', start_value=0.002, start_color='FF00AA00',
                               mid_type='num', mid_value=0.001, mid_color='9d52ff',

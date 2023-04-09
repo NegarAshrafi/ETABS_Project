@@ -13,7 +13,7 @@ sys.path.append("..")
 
 
 if __name__ == '__main__':
-    
+
     import Home.Controller as etabs
     drift = etabs.ETABS()
     # Main().run

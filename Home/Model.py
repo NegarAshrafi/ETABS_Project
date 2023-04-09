@@ -116,17 +116,11 @@ class EtabsModel:
         self.SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay('')
         self.SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(names)
 
-    def get_data_table_outputs(self, table_key = "Story Drifts"):
+    def get_data_table_outputs(self, table_key = "Story Drifts") -> pd.DataFrame:
         """
         output is pandas DataFrame type. a data table just like Show Tables at Etabs
         """
         all_table = self.SapModel.DatabaseTables.GetAvailableTables()[1]
-
-        if table_key in all_table:
-            print('there is table key ')
-        else:
-            print('there is not table key')
-
         GroupName = table_key
         FieldKeyList = []
         TableVersion = 0
@@ -140,7 +134,6 @@ class EtabsModel:
         self.column_no = len(FieldsKeysIncluded)
         self.row_no = int(tabledata_no / self.column_no)
 
-        # print(TableData)
         i = 0
         mydict = {}
         for item in iter(FieldsKeysIncluded):
