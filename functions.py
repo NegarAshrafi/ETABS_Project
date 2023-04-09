@@ -29,12 +29,18 @@ def rowcol_to_xlsxcell(first_col:int, first_row:int, last_col:int, last_row:int)
         n1 = first_row
         b= num_to_chr_cell(last_col)
         n2=last_row
-        
         cell = f'{a}{n1}:{b}{n2}'
         return cell
 
 
-        
+def strlist_to_floatlist(listobj:list) -> list:
 
-print(rowcol_to_xlsxcell(1,1,28,100))
-print(rowcol_to_xlsxcell(1,1,25,100))
+        newlist=[]
+        for i in listobj:
+                try:
+                        tmp = float(i)
+                        newlist.append(tmp)
+                        
+                except ValueError:
+                        newlist.append(i)
+        return newlist

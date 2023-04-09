@@ -12,6 +12,8 @@ import pyqtgraph as pg
 import json
 from openpyxl import Workbook
 from openpyxl.worksheet.table import Table, TableStyleInfo
+from openpyxl.formatting.rule import ColorScale, FormatObject, ColorScaleRule
+from openpyxl.styles import Color
 import ETABS_Project.functions as func
 # from Home.Controller import ETABS
 
@@ -176,11 +178,11 @@ class ETABSDrift:
 
         # fill data of dirfts to excel table by making list
         for rowindex in range(self.row_no):
-            row = list(self.load_table_xy.iloc[rowindex])
+            row = func.strlist_to_floatlist(list(self.load_table_xy.iloc[rowindex]))
             ws.append(row)
 
         # use local module to named excell cells with rows and cols number
-        ref = func.rowcol_to_xlsxcell(1,1,3,self.row_no+1)
+        ref = func.rowcol_to_xlsxcell(1 ,1 ,3 ,self.row_no+1)
         tab = Table(displayName="Table1", ref=ref)
 
         style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
@@ -188,4 +190,17 @@ class ETABSDrift:
         
         tab.tableStyleInfo = style
         ws.add_table(tab)
+        
+
+        # first = FormatObject(type='min')
+        # mid = FormatObject(type='mid')
+        # last = FormatObject(type='max')
+
+        # colors = [Color('AA0000'), Color('00AA00'), Color('0000AA')]
+
+        rule = ColorScaleRule(start_type='num', start_value=0.002, start_color='FF00AA00',
+                              mid_type='num', mid_value=0.001, mid_color='9d52ff',
+                              end_type='num', end_value=0.002, end_color='FFAA0000')
+        ws.conditional_formatting.add(ref, rule)
+
         wb.save("Drift_Check.xlsx")
