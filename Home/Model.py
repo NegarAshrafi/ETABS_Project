@@ -6,7 +6,7 @@ from Drift.Model import DriftModel
 
 
 class EtabsModel:
-    print('modelo didam')
+
     def __init__(self, filepath=None) -> None:
         self.ModelPath = filepath
         self.ProgramPath = "C:\Program Files\Computers and Structures\ETABS 20\ETABS.exe"

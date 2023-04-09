@@ -7,7 +7,7 @@ from Home import Model as mainmodel
 
 class DriftModel:
     def __init__(self, filepath=None) -> None:
-        self.derif_data = "Story Drift"
+        self.drift_data = "Story Drift"
         # super.__init__()
         # self.ModelPath = filepath
         # self.ProgramPath = "C:\Program Files\Computers and Structures\ETABS 20\ETABS.exe"

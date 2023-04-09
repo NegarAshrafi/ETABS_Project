@@ -1,9 +1,9 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow,  QTableWidgetItem, QListWidgetItem, QListWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow,  QTableWidgetItem
 from PyQt6.QtCore import pyqtSlot
 import sys
 from pathlib import Path
 import Drift.Model as etabs
-import Drift.View
+# import Drift.View
 from Drift.View import DriftWindow, UI
 import os
 import numpy as np
@@ -33,6 +33,7 @@ class ETABSDrift:
         # self.etabs_load = list(self.etabs.get_load_cases())
         # self.get_file_detaile()
         self.window = DriftWindow(self)
+        self.load_table_xy = pd.DataFrame()
 
         # self.view.driftbtn.clicked.connect(self.toggle_window)
         # self.load_window()
@@ -45,25 +46,35 @@ class ETABSDrift:
     # use loads and fill the load list
     def load_window(self, drift_data: list):
 
-        for index, value in enumerate(drift_data):
+        # for index, value in enumerate(drift_data):
             # self.window.load_case_list.insertItem(index, value)
-            item = QListWidgetItem(value)
-            self.window.load_case_list.addItem(item)
-            print(value)
-   
+            # item = QListWidgetItem(value)
+            # self.window.load_case_list.addItem(item)
+            # print(value)
+
+        self.window.load_case_table.setColumnCount(1)
+        self.window.load_case_table.setRowCount(len(drift_data))
+
+        for n in range(len(drift_data)):
+            
+            lqitem = drift_data[n]
+            self.window.load_case_table.setItem(n, 0 , QTableWidgetItem(lqitem))
+            print(lqitem)
         
-        
+       
         
         # self.etabs.select_load_cases(fltdrfload)
 
     def drift_table(self, etabsobj):
 
-        self.driftload = self.window.load_case_list.currentItem()
+        # self.driftload = self.window.load_case_list.currentItem()
+        self.driftload = "SPECXY_ND"
         print(f'drift table inja \n\n\n\n\n{self.driftload}')
-        selected_load = self.driftload.text()
+        # selected_load = self.driftload.text()
+        selected_load = self.driftload
         selected_table = self.window.drift_or_dis
         print('ghable get outpu')
-        story_drifts_table = etabsobj.get_data_table_outputs(table_key=selected_table)
+        story_drifts_table = etabsobj.etabs.get_data_table_outputs(table_key=selected_table)
         print('bade get output')
         # query desiered columns
         load_drift = story_drifts_table[story_drifts_table.OutputCase == selected_load]
@@ -81,7 +92,7 @@ class ETABSDrift:
         # pivot load table to transfer Direction column to X and Y column
 
         self.load_table_xy = load_table.pivot(columns="Direction", values=kvalue, index='Story')
-        print(self.load_table_xy)
+        print(f'load table xy ine \n\n\n{self.load_table_xy}\n\n\n')
         
         # check if there is not any Y load make a new column calls Y with 0 values
         if "Y" not in self. load_table_xy.columns:

@@ -4,11 +4,11 @@ from PyQt6 import *
 from PyQt6.QtCore import pyqtSlot, Qt, QRect
 from PyQt6.QtGui import QCursor
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtWidgets
-from pyqtgraph import GraphicsLayoutWidget
-import pyqtgraph.exporters
+# from pyqtgraph.Qt import QtCore, QtWidgets
+# from pyqtgraph import GraphicsLayoutWidget
+# import pyqtgraph.exporters
 from pathlib import Path
-from PyQt6 import uic
+# from PyQt6 import uic
 import sys
 
 
@@ -161,7 +161,7 @@ class DriftWindow(QWidget):
     print('class driftwindow')
     def __init__(self, etabs):
         super().__init__()
-        self.etabs = etabs
+        # self.etabs = etabs
         self.drift_or_dis = ''
         
         self.setGeometry(200, 200, 700, 400)
@@ -196,7 +196,7 @@ class DriftWindow(QWidget):
         
         hbox.addWidget(self.displacement_result_rbtn)
         hbox.addSpacing(1)
-        hbox.addStretch(2)
+        hbox.addStretch(1)
 
         self.load_label = QLabel('Load: Select Loade!')
         hbox.addWidget(self.load_label)
@@ -204,8 +204,8 @@ class DriftWindow(QWidget):
 
         #3rd row
         hbox = QHBoxLayout()
-        self.load_case_list = QListWidget()
-        hbox.addWidget(self.load_case_list)
+        self.load_case_table = QTableWidget()
+        hbox.addWidget(self.load_case_table)
 
         #diaghram
         self.drift_plot= pg.plot()

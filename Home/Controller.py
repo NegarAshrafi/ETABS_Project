@@ -3,7 +3,7 @@ from PyQt6.QtCore import pyqtSlot
 import sys
 from pathlib import Path
 import Home.Model as etabs
-from Home.View import UI, DriftWindow
+from Drift.View import UI, DriftWindow
 import os
 import numpy as np
 import pandas as pd
@@ -37,8 +37,6 @@ class ETABS(QMainWindow):
         print(f' etabs load :  {self.etabs_load}')
         self.get_file_detaile()
         self.show_info()
-        
-        self.window = DriftWindow(self)
         self.view.driftbtn.clicked.connect(self.toggle_window)
         self.view.driftbtn.clicked.connect(self.drift_check)
         # self.load_window()
@@ -128,9 +126,9 @@ class ETABS(QMainWindow):
         
         # self.view.driftbtn.clicked.connect(self.toggle_window)
         self.window.select_load_btn.clicked.connect(lambda: self.drift_control.drift_table(self))
-        self.drift_control.error_on_drifttable()
+        # self.drift_control.error_on_drifttable()
         self.window.select_load_btn.clicked.connect(self.drift_control.graph)
-        self.window.select_load_btn.clicked.connect(self.drift_control.graph)
+        print('bade keshidane graph')
 
 
 
