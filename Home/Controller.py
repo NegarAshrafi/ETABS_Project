@@ -97,5 +97,6 @@ class ETABS:
         fltrdloads = list(filter(lambda x:  x.startswith(("W", "EQ", "SPEC")), self.etabs_load))
         self.drift_control.load_window(fltrdloads)
         self.etabs.select_load_cases(fltrdloads)
-        self.drift_control.window.select_load_btn.clicked.connect(lambda: self.drift_control.drift_table(self))
+        self.drift_control.window.export_btn.clicked.connect(lambda: self.drift_control.export_drift_xls())
+        self.drift_control.window.load_case_list.itemClicked.connect(lambda: self.drift_control.drift_table(self.etabs))
         

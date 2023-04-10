@@ -4,7 +4,6 @@ from PyQt6.QtGui import QCursor
 import pyqtgraph as pg
 # from pyqtgraph.Qt import QtCore, QtWidgets
 # import pyqtgraph.exporters
-from pathlib import Path
 # from PyQt6 import uic
 
 pg.setConfigOption('background', 'w')
@@ -58,30 +57,37 @@ class DriftWindow(QWidget):
         # 3rd row
         hbox = QHBoxLayout()
         self.load_case_list = QListWidget()
+        self.load_case_list.setMaximumWidth(180)
+        self.load_case_list.setMinimumWidth(120)
         hbox.addWidget(self.load_case_list)
 
         # diaghram
         self.graphwin = pg.GraphicsLayoutWidget(show=True, title='Drift Control')
+        self.graphwin.setMinimumWidth(400)
         hbox.addWidget(self.graphwin)
 
         # table
         self.result_table = QTableWidget()
         self.result_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.result_table.setMinimumWidth(300)
         self.result_table.setStyleSheet("font-size: 12px;""font-weight: bold;")
         hbox.addWidget(self.result_table)
         main_vbox.addLayout(hbox)
 
         # 4th row
         hbox = QHBoxLayout()
-        self.select_load_btn = QPushButton('ُShow Results')
-        self.select_load_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        hbox.addWidget(self.select_load_btn)
-        hbox.addStretch(2)
+        # self.export_btn = QPushButton('ُExcel Export')
+        # self.export_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        # self.export_btn.hide()
+        # hbox.addWidget(self.export_btn)
+        hbox.addStretch(3)
 
-        self.report_btn = QPushButton('Report')
-        self.report_btn.setFixedSize(100, 40)
-        self.report_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        hbox.addWidget(self.report_btn)
+        self.export_btn = QPushButton('Report')
+        self.export_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.export_btn.hide()
+        self.export_btn.setFixedSize(100, 40)
+        self.export_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        hbox.addWidget(self.export_btn)
 
         hbox.addSpacing(1)
         cls_btn = QPushButton('Close')

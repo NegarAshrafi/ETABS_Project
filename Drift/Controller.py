@@ -24,14 +24,14 @@ class ETABSDrift:
             self.window.load_case_list.insertItem(index, value)
             item = QListWidgetItem(value)
             self.window.load_case_list.addItem(item)
-            print(value)
+        
 
     def drift_table(self, etabsobj):
 
         self.driftload = self.window.load_case_list.currentItem()
         selected_load = self.driftload.text()
         selected_table = self.window.drift_or_dis
-        story_drifts_table = etabsobj.etabs.get_data_table_outputs(table_key=selected_table)
+        story_drifts_table = etabsobj.get_data_table_outputs(table_key=selected_table)
         self.window.load_label.setText(f'Load: {selected_load}')
         # query desiered columns
         load_drift = story_drifts_table[story_drifts_table.OutputCase == selected_load]
@@ -112,19 +112,19 @@ class ETABSDrift:
         stringaxis.setTicks([list(dict(enumerate(lstring)).items())])
 
         self.window.graphwin.clear()
-        drift_graph = self.window.graphwin.addPlot(title = 'Drift Control')
+        drift_graph = self.window.graphwin.addPlot()
         drift_graph.addLegend()
+        drift_graph.addItem
         drift_graph.showGrid(x=True, y=True)
         drift_graph.setLabel('left', 'Story', units=None)
         drift_graph.setLabel('bottom', self.tableitem)
-        drift_graph.setXRange(0, 0.003)
-        drift_graph.setYRange(0, 7)
         drift_graph.setAxisItems(axisItems={'left': stringaxis})
         drift_graph.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X' )
         drift_graph.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
         drift_graph.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')
-       
-        self.export_drift_xls()
+        self.window.export_btn.show()
+        self.window.export_btn.setEnabled(True)
+        self.window.export_btn.setText('Report')
 
     def export_drift_xls(self):
 
@@ -153,4 +153,8 @@ class ETABSDrift:
         ws.conditional_formatting.add(ref, rule)
 
         wb.save("Drift_Check.xlsx")
+        self.window.export_btn.setText('Reported Successfully!')
+        self.window.export_btn.setFixedSize(150, 40)
+        self.window.export_btn.setDisabled(True)
+
         
