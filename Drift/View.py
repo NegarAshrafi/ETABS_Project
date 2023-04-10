@@ -90,11 +90,11 @@ class DriftWindow(QWidget):
         hbox.addWidget(self.export_btn)
 
         hbox.addSpacing(1)
-        cls_btn = QPushButton('Close')
-        cls_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        cls_btn.setFixedSize(70, 40)
-        cls_btn.clicked.connect(self.close)
-        hbox.addWidget(cls_btn)
+        self.cls_btn = QPushButton('Close')
+        self.cls_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.cls_btn.setFixedSize(70, 40)
+
+        hbox.addWidget(self.cls_btn)
         main_vbox.addLayout(hbox)
         self.radio_button()
 

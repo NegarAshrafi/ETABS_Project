@@ -1,19 +1,17 @@
 from PyQt6.QtWidgets import QTableWidgetItem, QListWidgetItem
-from PyQt6.QtCore import pyqtSlot
 from Drift.View import DriftWindow
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
 from openpyxl import Workbook
 from openpyxl.worksheet.table import Table, TableStyleInfo
-from openpyxl.formatting.rule import  ColorScaleRule
-import ETABS_Project.functions as func
-# from Home.Controller import ETABS
+from openpyxl.formatting.rule import ColorScaleRule
+import functions as func
 
 
 class ETABSDrift:
+
     def __init__(self):
-        # super().__init__()
         self.window = DriftWindow(self)
         self.load_table_xy = pd.DataFrame()
 
@@ -24,18 +22,17 @@ class ETABSDrift:
             self.window.load_case_list.insertItem(index, value)
             item = QListWidgetItem(value)
             self.window.load_case_list.addItem(item)
-        
 
     def drift_table(self, etabsobj):
 
         self.driftload = self.window.load_case_list.currentItem()
-        selected_load = self.driftload.text()
+        self.selected_load = self.driftload.text()
         selected_table = self.window.drift_or_dis
         story_drifts_table = etabsobj.get_data_table_outputs(table_key=selected_table)
-        self.window.load_label.setText(f'Load: {selected_load}')
+        self.window.load_label.setText(f'Load: {self.selected_load}')
         # query desiered columns
-        load_drift = story_drifts_table[story_drifts_table.OutputCase == selected_load]
-   
+        load_drift = story_drifts_table[story_drifts_table.OutputCase == self.selected_load]
+
         if selected_table == 'Story Drifts':
             load_table = load_drift[['Story', 'Direction', 'Drift']]
             kvalue = "Drift"
@@ -47,7 +44,7 @@ class ETABSDrift:
 
         # pivot load table to transfer Direction column to X and Y column
         self.load_table_xy = load_table.pivot(columns="Direction", values=kvalue, index='Story')
-        
+
         # check if there is not any Y load make a new column calls Y with 0 values
         if "Y" not in self. load_table_xy.columns:
             self.load_table_xy['Y'] = 0
@@ -61,7 +58,7 @@ class ETABSDrift:
 
             else:
                 self.load_table_xy = pd.DataFrame(np.zeros([8, 3]), columns=('Story', 'X', 'Y'))
-                load_table=None
+                load_table = None
 
         # reset index change previous index to 0-1-2-3-.... and use previouse index as a column
         self.load_table_xy.reset_index(inplace=True)
@@ -71,14 +68,12 @@ class ETABSDrift:
         self.temp = self.load_table_xy
         self.row_no = self.load_table_xy['X'].size
 
-
         if load_table is None:
             self.error_on_drifttable()
-            
+
         else:
             self.window.result_table.setColumnCount(3)
             self.window.result_table.setRowCount(self.row_no)
-            
 
             for row in range(self.row_no):
                 for col in range(3):
@@ -86,10 +81,11 @@ class ETABSDrift:
 
                     self.window.result_table.setItem(row, col, QTableWidgetItem(litem))
             self.graph()
-            
+
         self.window.result_table.setHorizontalHeaderLabels(['Story', self.tableitem + "\nX", self.tableitem  + "\nY"])
 
     def error_on_drifttable(self):
+
         self.window.result_table.clear()
         self.window.graphwin.clear()
 
@@ -100,6 +96,10 @@ class ETABSDrift:
         dict_lstring = list(dict(enumerate(lstring)).keys())
         valuelistx = self.load_table_xy['X'].tolist()
         valuelisty = self.load_table_xy['Y'].tolist()
+
+        self.maxdriftx = str(max(func.strlist_to_floatlist(valuelistx)))
+        self.maxdrifty = str(max(func.strlist_to_floatlist(valuelisty)))
+
         # transpose table
         datax = pd.DataFrame(np.array([valuelistx, dict_lstring], dtype=float)).T.to_numpy()
         datay = pd.DataFrame(np.array([valuelisty, dict_lstring], dtype=float)).T.to_numpy()
@@ -125,6 +125,7 @@ class ETABSDrift:
         self.window.export_btn.show()
         self.window.export_btn.setEnabled(True)
         self.window.export_btn.setText('Report')
+        self.msg = f' Load case = {self.selected_load}\nmax drift X = {self.maxdriftx}\nmax drift Y = {self.maxdrifty}'
 
     def export_drift_xls(self):
 
@@ -138,11 +139,10 @@ class ETABSDrift:
             ws.append(row)
 
         # use local module to named excell cells with rows and cols number
-        ref = func.rowcol_to_xlsxcell(1 ,1 ,3 ,self.row_no+1)
+        ref = func.rowcol_to_xlsxcell(1, 1, 3, self.row_no + 1)
         tab = Table(displayName="Table1", ref=ref)
 
-        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False,
-                            showLastColumn=False, showRowStripes=True, showColumnStripes=True)
+        style = TableStyleInfo(name="TableStyleMedium9", showFirstColumn=False, showLastColumn=False, showRowStripes=True, showColumnStripes=True)
 
         tab.tableStyleInfo = style
         ws.add_table(tab)
@@ -156,5 +156,3 @@ class ETABSDrift:
         self.window.export_btn.setText('Reported Successfully!')
         self.window.export_btn.setFixedSize(150, 40)
         self.window.export_btn.setDisabled(True)
-
-        

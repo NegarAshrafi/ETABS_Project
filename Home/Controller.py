@@ -1,7 +1,6 @@
 from pathlib import Path
 import Home.Model as etabs
 from Home.View import UI
-from Drift.View import DriftWindow
 import os
 import json
 import Drift.Controller as drift_control
@@ -10,8 +9,8 @@ import Drift.Controller as drift_control
 class ETABS:
 
     def __init__(self):
-        super().__init__()
 
+        super().__init__()
         self.view = UI(self)
         self.etabs = etabs.EtabsModel(self)
         self.drift_control = drift_control.ETABSDrift()
@@ -19,6 +18,9 @@ class ETABS:
 
         self.view.connect_btn.clicked.connect(self.open_etabs)
         self.view.driftbtn.clicked.connect(self.toggle_window)
+        self.drift_control = drift_control.ETABSDrift()
+        self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
+      
 
         self.name = self.etabs.connect_to_existing_file()
 
@@ -85,7 +87,7 @@ class ETABS:
 
     def toggle_window(self, checked):
 
-        self.drift_control = drift_control.ETABSDrift()
+        # self.drift_control = drift_control.ETABSDrift()
         if self.drift_control.window.isVisible():
             self.drift_control.window.hide()
         else:
@@ -94,9 +96,17 @@ class ETABS:
 
     def drift_check(self):
 
-        fltrdloads = list(filter(lambda x:  x.startswith(("W", "EQ", "SPEC")), self.etabs_load))
+        fltrdloads = list(filter(lambda x: x.startswith(("W", "EQ", "SPEC")), self.etabs_load))
         self.drift_control.load_window(fltrdloads)
         self.etabs.select_load_cases(fltrdloads)
         self.drift_control.window.export_btn.clicked.connect(lambda: self.drift_control.export_drift_xls())
         self.drift_control.window.load_case_list.itemClicked.connect(lambda: self.drift_control.drift_table(self.etabs))
-        
+
+        # msg = str(self.drift_control.max_drift_label_text())
+        # print(type(msg), msg)
+        # self.view.preres.setText(msg)
+
+    def max_drift_label(self):
+
+        self.drift_control.window.hide()
+        self.view.preres.setText(self.drift_control.msg)
