@@ -1,19 +1,12 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow,  QTableWidgetItem
+from PyQt6.QtWidgets import QTableWidgetItem, QListWidgetItem
 from PyQt6.QtCore import pyqtSlot
-import sys
-from pathlib import Path
-import Drift.Model as etabs
-# import Drift.View
 from Drift.View import DriftWindow
-import os
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
-import json
 from openpyxl import Workbook
 from openpyxl.worksheet.table import Table, TableStyleInfo
-from openpyxl.formatting.rule import ColorScale, FormatObject, ColorScaleRule
-from openpyxl.styles import Color
+from openpyxl.formatting.rule import  ColorScaleRule
 import ETABS_Project.functions as func
 # from Home.Controller import ETABS
 
@@ -21,63 +14,28 @@ import ETABS_Project.functions as func
 class ETABSDrift:
     def __init__(self):
         # super().__init__()
-        # self.view = UI(self)
-        # self.folderpath = 'D:/'
-        # self.connect_btn = self.view.connect_btn
-        # self.statuslabel = self.view.statuslabel
-        # self.prelabel = self.view.prelabel
-        # self.driftbtn = self.view.driftbtn
-        # self.connect_btn.clicked.connect(self.open_etabs)
-        # self.etabs = etabs.DriftModel(self)
-        # self.etabs = etabs.DriftModel()
-        # self.show_info()
-        # self.name = self.etabs.connect_to_existing_file()
-        # if self.name:
-        #     self.etabs.run_file()
-        # self.etabs_load = list(self.etabs.get_load_cases())
-        # self.get_file_detaile()
         self.window = DriftWindow(self)
         self.load_table_xy = pd.DataFrame()
-
-        # self.view.driftbtn.clicked.connect(self.toggle_window)
-        # self.load_window()
-        # self.window.select_load_btn.clicked.connect(self.drift_table)
-        # self.window.select_load_btn.clicked.connect(self.graph)
-        # self.window.select_load_btn.clicked.connect(self.graph)
-
-    
 
     # use loads and fill the load list
     def load_window(self, drift_data: list):
 
-        # for index, value in enumerate(drift_data):
-            # self.window.load_case_list.insertItem(index, value)
-            # item = QListWidgetItem(value)
-            # self.window.load_case_list.addItem(item)
-            # print(value)
-
-        self.window.load_case_table.setColumnCount(1)
-        self.window.load_case_table.setRowCount(len(drift_data))
-
-        for n in range(len(drift_data)):
-            
-            lqitem = drift_data[n]
-            self.window.load_case_table.setItem(n ,0 ,QTableWidgetItem(lqitem))
-            print(lqitem)
-        
-        # self.etabs.select_load_cases(fltdrfload)
+        for index, value in enumerate(drift_data):
+            self.window.load_case_list.insertItem(index, value)
+            item = QListWidgetItem(value)
+            self.window.load_case_list.addItem(item)
+            print(value)
 
     def drift_table(self, etabsobj):
 
-        # self.driftload = self.window.load_case_list.currentItem()
-        self.driftload = "SPECXY_ND"
-        # selected_load = self.driftload.text()
-        selected_load = self.driftload
+        self.driftload = self.window.load_case_list.currentItem()
+        selected_load = self.driftload.text()
         selected_table = self.window.drift_or_dis
         story_drifts_table = etabsobj.etabs.get_data_table_outputs(table_key=selected_table)
+        self.window.load_label.setText(f'Load: {selected_load}')
         # query desiered columns
         load_drift = story_drifts_table[story_drifts_table.OutputCase == selected_load]
-
+   
         if selected_table == 'Story Drifts':
             load_table = load_drift[['Story', 'Direction', 'Drift']]
             kvalue = "Drift"
@@ -100,8 +58,10 @@ class ETABSDrift:
             # arrange column
             if "Story" in self.load_table_xy.columns:
                 self.load_table_xy = self.load_table_xy[['Story', 'X', 'Y']]
+
             else:
                 self.load_table_xy = pd.DataFrame(np.zeros([8, 3]), columns=('Story', 'X', 'Y'))
+                load_table=None
 
         # reset index change previous index to 0-1-2-3-.... and use previouse index as a column
         self.load_table_xy.reset_index(inplace=True)
@@ -111,22 +71,27 @@ class ETABSDrift:
         self.temp = self.load_table_xy
         self.row_no = self.load_table_xy['X'].size
 
-        if self.row_no == 0:
+
+        if load_table is None:
             self.error_on_drifttable()
+            
         else:
             self.window.result_table.setColumnCount(3)
             self.window.result_table.setRowCount(self.row_no)
+            
 
             for row in range(self.row_no):
                 for col in range(3):
-                    litem = self.load_table_xy.iloc[row][col]
+                    litem = (self.load_table_xy.iloc[row][col])
+
                     self.window.result_table.setItem(row, col, QTableWidgetItem(litem))
-            self.window.load_label.setText(f'Load: {selected_load}')
-        self.window.result_table.setHorizontalHeaderLabels(['Story', self.tableitem + "\nX", self.tableitem +"\nY"])
+            self.graph()
+            
+        self.window.result_table.setHorizontalHeaderLabels(['Story', self.tableitem + "\nX", self.tableitem  + "\nY"])
 
     def error_on_drifttable(self):
-        self.window.result_table.setColumnCount(3)
-        self.window.result_table.setRowCount(8)
+        self.window.result_table.clear()
+        self.window.drift_plot.clear()
 
     def graph(self):
 
@@ -139,8 +104,6 @@ class ETABSDrift:
         datax = pd.DataFrame(np.array([valuelistx, dict_lstring], dtype=float)).T.to_numpy()
         datay = pd.DataFrame(np.array([valuelisty, dict_lstring], dtype=float)).T.to_numpy()
         datalimit = np.array([[0.002, 0], [0.002, 1], [0.002, 2], [0.002, 3], [0.002, 4], [0.002, 5], [0.002, 6]])
-        print(f'data is \n {datax}')
-        print(datax.shape)
 
         penx = pg.mkPen({'color': "g", 'width': 3})
         peny = pg.mkPen({'color': "b", 'width': 3})
@@ -188,3 +151,4 @@ class ETABSDrift:
         ws.conditional_formatting.add(ref, rule)
 
         wb.save("Drift_Check.xlsx")
+        
