@@ -19,21 +19,31 @@ class ETABS(QMainWindow):
         super().__init__()
 
         self.view = UI(self)
+
+        ''' TODO: seperate home-window from the drift-control-window'''
         self.window = DriftWindow(self)
         self.etabs = etabs.EtabsModel(self)
+
+        ''' TODO: Create the drift-window after click on it's button'''
         self.drift_control = drift_control.ETABSDrift()
+
+        ''' TODO: need a reason to define as attr, otherwise, better to define it as variable'''
         self.folderpath = 'D:/'
         # self.connect_btn = self.view.connect_btn
         # self.statuslabel = self.view.statuslabel
         # self.prelabel = self.view.prelabel
         # self.driftbtn = self.view.driftbtn
+
+        ''' TODO: put all connect actions next to each other'''
         self.view.connect_btn.clicked.connect(self.open_etabs)
         self.name = self.etabs.connect_to_existing_file()
+
+        ''' TODO: make sure to delete or comment unneccesary prints'''
         print(f'connect shodam {self.name}')
         if self.name:
             print(f'self name is {self.name}')
             self.etabs.run_file
-        
+
         self.etabs_load = list(self.etabs.get_load_cases())
         print(f' etabs load :  {self.etabs_load}')
         self.get_file_detaile()
@@ -106,11 +116,12 @@ class ETABS(QMainWindow):
         self.close()
 
     def toggle_window(self, checked):
-        if self.window.isVisible():
-            self.window.hide()
+        # if self.window.isVisible():
+        #     self.window.hide()
 
-        else:
-            self.window.show()
+        # else:
+        #     self.window.show()
+        self.drift_control.window.show()
 
     def drift_check(self):
 

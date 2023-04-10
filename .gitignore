@@ -1,0 +1,27 @@
+# temprory files - no need to share
+~temp/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# DUMMY_TEST file for each developers
+DUMMY_TEST/
+
+
+# IDE settings
+.vscode/
+.idea/
+
+# PyTest 
+.pytest_cache/
+
+
+# build files for .exe created by pyinstaller
+build/
+dist/
+*.spec
+*.iss
+
+# files for test coverage
+.coverage
+htmlcov/

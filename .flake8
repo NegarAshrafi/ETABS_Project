@@ -1,0 +1,7 @@
+[flake8]
+ignore = E501  # line too long
+
+flake8.linter.run = "onType"
+
+max-line-length = 100
+exclude = DUMMY_TEST/*
