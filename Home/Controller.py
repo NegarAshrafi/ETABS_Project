@@ -137,9 +137,9 @@ class ETABS(QMainWindow):
         self.window.select_load_btn.clicked.connect(self.drift_control.graph)
 
 
-app = QApplication(sys.argv)
-etabs1 = ETABS()
-sys.exit(app.exec())
-window = etabs1
-window.show()
+# app = QApplication(sys.argv)
+# etabs1 = ETABS()
+# sys.exit(app.exec())
+# window = etabs1
+# window.show()
 # app.exec()
