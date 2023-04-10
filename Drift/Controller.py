@@ -50,7 +50,7 @@ class ETABSDrift:
             self.load_table_xy['Y'] = 0
 
         if "X" not in self.load_table_xy.columns:
-            self.load_table_xy['X']=0
+            self.load_table_xy['X'] = 0
 
             # arrange column
             if "Story" in self.load_table_xy.columns:
@@ -82,7 +82,7 @@ class ETABSDrift:
                     self.window.result_table.setItem(row, col, QTableWidgetItem(litem))
             self.graph()
 
-        self.window.result_table.setHorizontalHeaderLabels(['Story', self.tableitem + "\nX", self.tableitem  + "\nY"])
+        self.window.result_table.setHorizontalHeaderLabels(['Story', self.tableitem + "\nX", self.tableitem + "\nY"])
 
     def error_on_drifttable(self):
 
@@ -119,7 +119,7 @@ class ETABSDrift:
         drift_graph.setLabel('left', 'Story', units=None)
         drift_graph.setLabel('bottom', self.tableitem)
         drift_graph.setAxisItems(axisItems={'left': stringaxis})
-        drift_graph.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X' )
+        drift_graph.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X')
         drift_graph.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
         drift_graph.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')
         self.window.export_btn.show()

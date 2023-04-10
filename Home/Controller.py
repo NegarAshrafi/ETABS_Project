@@ -20,7 +20,6 @@ class ETABS:
         self.view.driftbtn.clicked.connect(self.toggle_window)
         self.drift_control = drift_control.ETABSDrift()
         self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
-      
 
         self.name = self.etabs.connect_to_existing_file()
 
