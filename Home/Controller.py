@@ -1,30 +1,22 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow,  QTableWidgetItem
-from PyQt6.QtCore import pyqtSlot
-import sys
 from pathlib import Path
 import Home.Model as etabs
 from Home.View import UI
 from Drift.View import DriftWindow
 import os
-import numpy as np
-import pandas as pd
-import pyqtgraph as pg
 import json
 import Drift.Controller as drift_control
-# from ..ETABS_Project import functions
 
-# driftcntrl = Controller()
+
 class ETABS:
+
     def __init__(self):
         super().__init__()
 
         self.view = UI(self)
         self.etabs = etabs.EtabsModel(self)
         self.drift_control = drift_control.ETABSDrift()
-
         self.folderpath = 'D:/'
 
-        ''' TODO: put all connect actions next to each other'''
         self.view.connect_btn.clicked.connect(self.open_etabs)
         self.view.driftbtn.clicked.connect(self.toggle_window)
 
@@ -105,8 +97,5 @@ class ETABS:
         fltrdloads = list(filter(lambda x:  x.startswith(("W", "EQ", "SPEC")), self.etabs_load))
         self.drift_control.load_window(fltrdloads)
         self.etabs.select_load_cases(fltrdloads)
-
-        # self.view.driftbtn.clicked.connect(self.toggle_window)
         self.drift_control.window.select_load_btn.clicked.connect(lambda: self.drift_control.drift_table(self))
-        # self.drift_control.error_on_drifttable()
-        # self.drift_control.window.select_load_btn.clicked.connect(self.drift_control.graph)
+        

@@ -5,8 +5,7 @@ import sys
 
 
 if __name__ == '__main__':
-    
+
     app = QApplication(sys.argv)
-    
     drift = Home.ETABS()
     sys.exit(app.exec())

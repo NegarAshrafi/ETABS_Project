@@ -91,7 +91,7 @@ class ETABSDrift:
 
     def error_on_drifttable(self):
         self.window.result_table.clear()
-        self.window.drift_plot.clear()
+        self.window.graphwin.clear()
 
     def graph(self):
 
@@ -111,17 +111,19 @@ class ETABSDrift:
         stringaxis = pg.AxisItem(orientation='left')
         stringaxis.setTicks([list(dict(enumerate(lstring)).items())])
 
-        self.window.drift_plot.clear()
-        self.window.drift_plot.addLegend()
-        self.window.drift_plot.showGrid(x=True, y=True)
-        self.window.drift_plot.setLabel('left', 'Story', units=None)
-        self.window.drift_plot.setLabel('bottom', self.tableitem)
-        self.window.drift_plot.setXRange(0, 0.003)
-        self.window.drift_plot.setYRange(0, 7)
-        self.window.drift_plot.setAxisItems(axisItems={'left': stringaxis})
-        self.window.drift_plot.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X' )
-        self.window.drift_plot.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
-        self.window.drift_plot.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')
+        self.window.graphwin.clear()
+        drift_graph = self.window.graphwin.addPlot(title = 'Drift Control')
+        drift_graph.addLegend()
+        drift_graph.showGrid(x=True, y=True)
+        drift_graph.setLabel('left', 'Story', units=None)
+        drift_graph.setLabel('bottom', self.tableitem)
+        drift_graph.setXRange(0, 0.003)
+        drift_graph.setYRange(0, 7)
+        drift_graph.setAxisItems(axisItems={'left': stringaxis})
+        drift_graph.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X' )
+        drift_graph.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
+        drift_graph.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')
+       
         self.export_drift_xls()
 
     def export_drift_xls(self):
