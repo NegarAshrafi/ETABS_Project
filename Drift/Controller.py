@@ -34,7 +34,7 @@ class ETABSDrift:
         self.window.load_label.setText(f'Load: {self.selected_load}')
         # query desiered columns
         load_drift = story_drifts_table[story_drifts_table.OutputCase == self.selected_load]
-        print(f'load drift is {load_drift}')
+
         if selected_table == 'Story Drifts':
             load_table = load_drift[['Story', 'Direction', 'Drift']]
             kvalue = "Drift"
@@ -106,7 +106,7 @@ class ETABSDrift:
         # transpose table
         datax = pd.DataFrame(np.array([valuelistx, dict_lstring], dtype=float)).T.to_numpy()
         datay = pd.DataFrame(np.array([valuelisty, dict_lstring], dtype=float)).T.to_numpy()
-        datalimit = np.array([[0.002, 0], [0.002, 1], [0.002, 2], [0.002, 3], [0.002, 4], [0.002, 5], [0.002, 6]])
+        datalimit = np.array([[0.002, x] for x in range(self.row_no)])
 
         penx = pg.mkPen({'color': "g", 'width': 3})
         peny = pg.mkPen({'color': "b", 'width': 3})
