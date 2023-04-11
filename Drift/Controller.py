@@ -129,7 +129,7 @@ class ETABSDrift:
         self.window.export_btn.setText('Report')
 
         g_exporter = pg.exporters.ImageExporter(drift_graph)
-        g_exporter.export('ETABS_Project/Temp/plot.png')
+        g_exporter.export('ETABS_Project/Temp/plot.jpg')
 
         self.msg = f' Load case = {self.selected_load}\nmax drift X = {self.maxdriftx}\nmax drift Y = {self.maxdrifty}'
 
@@ -158,7 +158,7 @@ class ETABSDrift:
                               end_type='num', end_value=0.002, end_color='FFAA0000')
         ws.conditional_formatting.add(ref, rule)
 
-        graph_img = Image('ETABS_Project/Temp/plot.png')
+        graph_img = Image('ETABS_Project/Temp/plot.jpg')
         ws.add_image(graph_img, 'E1')
 
 
