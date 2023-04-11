@@ -3,6 +3,7 @@ from Drift.View import DriftWindow
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
+import pyqtgraph.exporters
 from openpyxl import Workbook
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.formatting.rule import ColorScaleRule
@@ -125,6 +126,10 @@ class ETABSDrift:
         self.window.export_btn.show()
         self.window.export_btn.setEnabled(True)
         self.window.export_btn.setText('Report')
+
+        g_exporter = pg.exporters.ImageExporter(drift_graph)
+        g_exporter.export('ETABS_Project/Temp/plot.png')
+
         self.msg = f' Load case = {self.selected_load}\nmax drift X = {self.maxdriftx}\nmax drift Y = {self.maxdrifty}'
 
     def export_drift_xls(self):
@@ -152,7 +157,10 @@ class ETABSDrift:
                               end_type='num', end_value=0.002, end_color='FFAA0000')
         ws.conditional_formatting.add(ref, rule)
 
-        wb.save("Drift_Check.xlsx")
+        
+
+
+        wb.save("ETABS_Project/Reports/Drift_Check.xlsx")
         self.window.export_btn.setText('Reported Successfully!')
         self.window.export_btn.setFixedSize(150, 40)
         self.window.export_btn.setDisabled(True)
