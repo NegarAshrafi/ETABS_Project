@@ -143,8 +143,3 @@ class EtabsModel:
 
         data_frame = pd.DataFrame(mydict, columns=FieldsKeysIncluded)
         return data_frame
-
-
-    # def drift_data(self):
-    #     table_key = DriftModel.drift_data
-    #     drift_dataframe = self.get_data_table_outputs(table_key=table_key)

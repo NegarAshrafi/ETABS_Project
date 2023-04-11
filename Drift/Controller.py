@@ -111,7 +111,7 @@ class ETABSDrift:
         # transpose table
         datax = pd.DataFrame(np.array([valuelistx, dict_lstring], dtype=float)).T.to_numpy()
         datay = pd.DataFrame(np.array([valuelisty, dict_lstring], dtype=float)).T.to_numpy()
-        datalimit = np.array([[0.002, x] for x in range(self.row_no)]) if self.tableitem == "Drift" else np.array([[0, 0], [self.height * 0.02, self.row_no]]) 
+        datalimit = np.array([[0.002, x] for x in range(self.row_no)]) if self.tableitem == "Drift" else np.array([[0, 0], [self.height * 0.02, self.row_no]])
 
         penx = pg.mkPen({'color': "g", 'width': 3})
         peny = pg.mkPen({'color': "b", 'width': 3})
@@ -134,7 +134,7 @@ class ETABSDrift:
         self.window.export_btn.setEnabled(True)
         self.window.export_btn.setText('Report')
 
-        self.msg = f' Load case = {self.selected_load}\nmax drift X = {self.maxdriftx}\nmax drift Y = {self.maxdrifty}'
+        self.msg = f' Load Case = {self.selected_load}\nMax {self.tableitem} X = {self.maxdriftx}\nMax {self.tableitem} Y = {self.maxdrifty}'
 
     def export_drift_xls(self):
 
