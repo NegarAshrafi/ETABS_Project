@@ -23,7 +23,7 @@ class UI(QMainWindow):
         # self.setupUi(self)
         self.show()
         self.name = filepath
-        self.setGeometry(200 ,200 ,700 ,400 )
+        self.setGeometry(200, 200, 700, 400 )
 
         self.setWindowTitle("My App")
 

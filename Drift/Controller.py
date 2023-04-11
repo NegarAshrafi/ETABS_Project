@@ -7,6 +7,7 @@ import pyqtgraph.exporters
 from openpyxl import Workbook
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.formatting.rule import ColorScaleRule
+from openpyxl.drawing.image import Image
 import functions as func
 
 
@@ -157,7 +158,8 @@ class ETABSDrift:
                               end_type='num', end_value=0.002, end_color='FFAA0000')
         ws.conditional_formatting.add(ref, rule)
 
-        
+        graph_img = Image('ETABS_Project/Temp/plot.png')
+        ws.add_image(graph_img, 'E1')
 
 
         wb.save("ETABS_Project/Reports/Drift_Check.xlsx")
