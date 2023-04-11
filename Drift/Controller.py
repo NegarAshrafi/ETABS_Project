@@ -35,6 +35,11 @@ class ETABSDrift:
         # query desiered columns
         load_drift = story_drifts_table[story_drifts_table.OutputCase == self.selected_load]
 
+        story_definitions_table = etabsobj.get_data_table_outputs(table_key="Story Definitions")
+        
+        # project total height
+        self.height = story_definitions_table['Height'].astype(float).sum()
+
         if selected_table == 'Story Drifts':
             load_table = load_drift[['Story', 'Direction', 'Drift']]
             kvalue = "Drift"
@@ -106,7 +111,7 @@ class ETABSDrift:
         # transpose table
         datax = pd.DataFrame(np.array([valuelistx, dict_lstring], dtype=float)).T.to_numpy()
         datay = pd.DataFrame(np.array([valuelisty, dict_lstring], dtype=float)).T.to_numpy()
-        datalimit = np.array([[0.002, x] for x in range(self.row_no)])
+        datalimit = np.array([[0.002, x] for x in range(self.row_no)]) if self.tableitem == "Drift" else np.array([[0, 0], [self.height * 0.02, self.row_no]]) 
 
         penx = pg.mkPen({'color': "g", 'width': 3})
         peny = pg.mkPen({'color': "b", 'width': 3})
@@ -115,27 +120,27 @@ class ETABSDrift:
         stringaxis.setTicks([list(dict(enumerate(lstring)).items())])
 
         self.window.graphwin.clear()
-        drift_graph = self.window.graphwin.addPlot()
-        drift_graph.addLegend()
-        drift_graph.addItem
-        drift_graph.showGrid(x=True, y=True)
-        drift_graph.setLabel('left', 'Story', units=None)
-        drift_graph.setLabel('bottom', self.tableitem)
-        drift_graph.setAxisItems(axisItems={'left': stringaxis})
-        drift_graph.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X')
-        drift_graph.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
-        drift_graph.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')
+        self.drift_graph = self.window.graphwin.addPlot()
+        self.drift_graph.addLegend()
+        self.drift_graph.addItem
+        self.drift_graph.showGrid(x=True, y=True)
+        self.drift_graph.setLabel('left', 'Story', units=None)
+        self.drift_graph.setLabel('bottom', self.tableitem)
+        self.drift_graph.setAxisItems(axisItems={'left': stringaxis})
+        self.drift_graph.plot(datax, title=self.tableitem + ' X', symbol='o', symbolPen='g', pen=penx, name='Drift X')
+        self.drift_graph.plot(datay, title=self.tableitem + ' Y', symbol='o', symbolPen='b', pen=peny, name='Drift Y')
+        self.drift_graph.plot(datalimit, title=self.tableitem + ' Limit', pen=penlimit, name='Limit')
         self.window.export_btn.show()
         self.window.export_btn.setEnabled(True)
         self.window.export_btn.setText('Report')
 
-        # export graph as png image
-        g_exporter = pg.exporters.ImageExporter(drift_graph)
-        g_exporter.export('ETABS_Project/Temp/plot.png')
-
         self.msg = f' Load case = {self.selected_load}\nmax drift X = {self.maxdriftx}\nmax drift Y = {self.maxdrifty}'
 
     def export_drift_xls(self):
+
+        # export graph as png image
+        g_exporter = pg.exporters.ImageExporter(self.drift_graph)
+        g_exporter.export('ETABS_Project/Temp/plot.png')
 
         wb = Workbook()
         ws = wb.active

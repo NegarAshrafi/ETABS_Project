@@ -2,7 +2,7 @@ import sys
 import comtypes.client
 from pathlib import Path
 import pandas as pd
-from Drift.Model import DriftModel
+# from Drift.Model import DriftModel
 
 
 class EtabsModel:
@@ -87,7 +87,7 @@ class EtabsModel:
         # self.SapModel.SetModelIsLocked(False)
         # run model (this will create the analysis model)
         print('Run......')
-        # ret = self.SapModel.Analyze.RunAnalysis()
+        ret = self.SapModel.Analyze.RunAnalysis()
 
     def get_file_path(self):
         self.path = Path(self.SapModel.GetModelFilename()).parent
@@ -143,6 +143,7 @@ class EtabsModel:
 
         data_frame = pd.DataFrame(mydict, columns=FieldsKeysIncluded)
         return data_frame
+
 
     # def drift_data(self):
     #     table_key = DriftModel.drift_data

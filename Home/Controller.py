@@ -73,7 +73,7 @@ class ETABS:
                 datalist = []
                 for i, j in data.items():
                     datalist.append(f'{i}:   {j}\n')
-                self.view.prelabel.setText("".join(datalist))
+                self.view.preetabs.setText("".join(datalist))
             else:
                 print('nist')
         # except: print('nashod')
