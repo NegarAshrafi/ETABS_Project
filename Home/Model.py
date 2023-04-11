@@ -15,25 +15,23 @@ class EtabsModel:
         self.software_exe_path = ''
         self.SapModel = None
 
-
     def connect_to_existing_file(self) -> str:
+
         """ If an Etabs file is in the process this method will connect the app to that and return the path of its file"""
-        print('miakham connect sham')
         try:
             self.myETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
             self.success = True
             self.SapModel = self.myETABSObject.SapModel
-            print('try')
+
         except (OSError, comtypes.COMError):
             self.success = False
-            print('exept')
+
             # sys.exit(-1)
-        print(f'self my etabsobject ine {self.myETABSObject}')
-        if self.myETABSObject is None:
-            print('helper sakhyam')
-            helper = comtypes.client.CreateObject('ETABSv1.Helper')
-            print(f'helper is {helper}')
-            helper = helper.QueryInterface(comtypes.gen.ETABSv1.cHelper)
+            if self.myETABSObject is None:
+                print('helper sakhyam')
+                helper = comtypes.client.CreateObject('ETABSv1.Helper')
+                print(f'helper is {helper}')
+                helper = helper.QueryInterface(comtypes.gen.ETABSv1.cHelper)
 
             if hasattr(helper, 'GetObjectProcess'):
                 print('helperam attr dare')
@@ -67,9 +65,9 @@ class EtabsModel:
         helper = comtypes.client.CreateObject('ETABSv1.Helper')
         helper = helper.QueryInterface(comtypes.gen.ETABSv1.cHelper)
 
-        try: 
+        try:
             # create an instance of the ETABS object from the latest installed ETABS
-            self.myETABSObject = helper.CreateObjectProgID("CSI.ETABS.API.ETABSObject") 
+            self.myETABSObject = helper.CreateObjectProgID("CSI.ETABS.API.ETABSObject")
         except (OSError, comtypes.COMError):
             print("Cannot start a new instance of the program.")
             sys.exit(-1)
@@ -116,11 +114,11 @@ class EtabsModel:
         self.SapModel.DatabaseTables.SetLoadCombinationsSelectedForDisplay('')
         self.SapModel.DatabaseTables.SetLoadCasesSelectedForDisplay(names)
 
-    def get_data_table_outputs(self, table_key = "Story Drifts") -> pd.DataFrame:
+    def get_data_table_outputs(self, table_key="Story Drifts") -> pd.DataFrame:
         """
         output is pandas DataFrame type. a data table just like Show Tables at Etabs
         """
-        all_table = self.SapModel.DatabaseTables.GetAvailableTables()[1]
+        # all_table = self.SapModel.DatabaseTables.GetAvailableTables()[1]
         GroupName = table_key
         FieldKeyList = []
         TableVersion = 0
@@ -145,8 +143,7 @@ class EtabsModel:
 
         data_frame = pd.DataFrame(mydict, columns=FieldsKeysIncluded)
         return data_frame
-    
-    def drift_data(self):
-        table_key = DriftModel.drift_data
-        drift_dataframe = self.get_data_table_outputs(table_key=table_key)
-        
+
+    # def drift_data(self):
+    #     table_key = DriftModel.drift_data
+    #     drift_dataframe = self.get_data_table_outputs(table_key=table_key)

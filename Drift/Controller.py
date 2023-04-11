@@ -34,7 +34,7 @@ class ETABSDrift:
         self.window.load_label.setText(f'Load: {self.selected_load}')
         # query desiered columns
         load_drift = story_drifts_table[story_drifts_table.OutputCase == self.selected_load]
-
+        print(f'load drift is {load_drift}')
         if selected_table == 'Story Drifts':
             load_table = load_drift[['Story', 'Direction', 'Drift']]
             kvalue = "Drift"
@@ -45,7 +45,7 @@ class ETABSDrift:
             self.tableitem = 'Displacement'
 
         # pivot load table to transfer Direction column to X and Y column
-        self.load_table_xy = load_table.pivot(columns="Direction", values=kvalue, index='Story')
+        self.load_table_xy = load_table.pivot_table(columns="Direction", values=kvalue, index='Story', sort=False)
 
         # check if there is not any Y load make a new column calls Y with 0 values
         if "Y" not in self. load_table_xy.columns:
@@ -79,7 +79,7 @@ class ETABSDrift:
 
             for row in range(self.row_no):
                 for col in range(3):
-                    litem = (self.load_table_xy.iloc[row][col])
+                    litem = str(self.load_table_xy.iloc[row][col])
 
                     self.window.result_table.setItem(row, col, QTableWidgetItem(litem))
             self.graph()
@@ -94,6 +94,7 @@ class ETABSDrift:
     def graph(self):
 
         # get int from str column
+        self.load_table_xy = self.load_table_xy.iloc[::-1]
         lstring = self.load_table_xy['Story'].tolist()
         dict_lstring = list(dict(enumerate(lstring)).keys())
         valuelistx = self.load_table_xy['X'].tolist()
@@ -128,8 +129,9 @@ class ETABSDrift:
         self.window.export_btn.setEnabled(True)
         self.window.export_btn.setText('Report')
 
+        # export graph as png image
         g_exporter = pg.exporters.ImageExporter(drift_graph)
-        g_exporter.export('ETABS_Project/Temp/plot.jpg')
+        g_exporter.export('ETABS_Project/Temp/plot.png')
 
         self.msg = f' Load case = {self.selected_load}\nmax drift X = {self.maxdriftx}\nmax drift Y = {self.maxdrifty}'
 
@@ -158,9 +160,9 @@ class ETABSDrift:
                               end_type='num', end_value=0.002, end_color='FFAA0000')
         ws.conditional_formatting.add(ref, rule)
 
-        graph_img = Image('ETABS_Project/Temp/plot.jpg')
+        # add graph image to excel 
+        graph_img = Image('ETABS_Project/Temp/plot.png')
         ws.add_image(graph_img, 'E1')
-
 
         wb.save("ETABS_Project/Reports/Drift_Check.xlsx")
         self.window.export_btn.setText('Reported Successfully!')
