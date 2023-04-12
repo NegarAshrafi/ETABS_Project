@@ -15,7 +15,7 @@ class DriftWindow(QWidget):
     def __init__(self, etabs):
         super().__init__()
         self.drift_or_dis = ''
-        self.setGeometry(200, 200, 700, 400)
+        self.setGeometry(200, 200, 900, 500)
         self.setWindowTitle("Drift Window")
 
         # main layout
@@ -57,8 +57,8 @@ class DriftWindow(QWidget):
         # 3rd row
         hbox = QHBoxLayout()
         self.load_case_list = QListWidget()
-        self.load_case_list.setMaximumWidth(180)
-        self.load_case_list.setMinimumWidth(120)
+        self.load_case_list.setMaximumWidth(220)
+        self.load_case_list.setMinimumWidth(180)
         hbox.addWidget(self.load_case_list)
 
         # diaghram
@@ -71,6 +71,7 @@ class DriftWindow(QWidget):
         self.result_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.result_table.setMinimumWidth(300)
         self.result_table.setStyleSheet("font-size: 12px;""font-weight: bold;")
+        self.result_table.horizontalHeader().setVisible(False)
         hbox.addWidget(self.result_table)
         main_vbox.addLayout(hbox)
 

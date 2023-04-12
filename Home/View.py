@@ -3,15 +3,6 @@ from PyQt6 import *
 from PyQt6.QtCore import pyqtSlot, Qt
 from PyQt6.QtGui import QCursor, QFont
 import pyqtgraph as pg
-from pathlib import Path
-
-
-# from PySide6.QtCore import *
-# from PySide6.QtGui import *
-# from PySide6.QtWidgets import *
-
-pg.setConfigOption('background', 'w')
-pg.setConfigOption('foreground', 'k')
 
 
 class UI(QMainWindow):

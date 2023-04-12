@@ -16,6 +16,7 @@ class ETABSDrift:
     def __init__(self):
         self.window = DriftWindow(self)
         self.load_table_xy = pd.DataFrame()
+        self.msg = ""
 
     # use loads and fill the load list
     def load_window(self, drift_data: list):

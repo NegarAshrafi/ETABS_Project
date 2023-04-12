@@ -57,8 +57,6 @@ class EtabsModel:
         self.SapModel = self.myETABSObject.SapModel
         self.name = Path(self.SapModel.GetModelFilename())
         return self.name
-        # else:
-        #     pass
 
     def open_file(self):
         # create API helper object
@@ -86,8 +84,18 @@ class EtabsModel:
     def run_file(self):
         # self.SapModel.SetModelIsLocked(False)
         # run model (this will create the analysis model)
-        print('Run......')
         ret = self.SapModel.Analyze.RunAnalysis()
+        print(ret)
+        self.run_msg = "Run Anaysis is Completed"
+        return self.run_msg
+
+    def get_case_statuse(self) -> str:
+        self.case_status = self.SapModel.Analyze.GetCaseStatus()[2]
+        status = {1: "Not run",
+                    2: "Could not start",
+                    3: "Not finished",
+                    4: "Finished"}
+        return status[self.case_status]
 
     def get_file_path(self):
         self.path = Path(self.SapModel.GetModelFilename()).parent

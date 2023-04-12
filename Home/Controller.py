@@ -1,5 +1,7 @@
 from pathlib import Path
 import Home.Model as etabs
+from ETABS_Project.Home.Wellcome_View import WellcomeWindow
+
 from Home.View import UI
 import os
 import json
@@ -11,29 +13,30 @@ class ETABS:
     def __init__(self):
 
         super().__init__()
-        self.view = UI(self)
+        self.wellcome = WellcomeWindow(self)
+        self.wellcome.show()
+        # self.view = UI(self)
         self.etabs = etabs.EtabsModel(self)
         self.drift_control = drift_control.ETABSDrift()
         self.folderpath = 'D:/'
 
-        self.view.connect_btn.clicked.connect(self.open_etabs)
-        self.view.driftbtn.clicked.connect(self.toggle_window)
-        self.drift_control = drift_control.ETABSDrift()
-        self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
+        self.wellcome.new_file_btn.clicked.connect(self.open_etabs)
+        self.wellcome.connect_btn.clicked.connect(self.connect_etabs)
+        self.wellcome.run_btn.clicked.connect(self.run_etabs)
 
-        self.name = self.etabs.connect_to_existing_file()
+        # self.view.connect_btn.clicked.connect(self.open_etabs)
+        
 
-        if self.name:
-            self.etabs.run_file
+        # self.name = self.etabs.connect_to_exis
 
-        self.etabs_load = list(self.etabs.get_load_cases())
-        self.get_file_detaile()
-        self.show_info()
+        # if self.name:
+        #     self.etabs.run_file
+
 
     # @pyqtSlot()
     def open_etabs(self) -> None:
 
-        ame = self.view.open_dialog(self.folderpath)
+        ame = self.wellcome.open_dialog(self.folderpath)
         if ame is False:
             print('')
         else:
@@ -42,7 +45,32 @@ class ETABS:
             self.get_file_detaile()
             self.etabs = etabs.EtabsModel(self.name)
             self.etabs.open_file()
+        self.wellcome.run_btn.setEnabled(True)
+    
+    def connect_etabs(self):
+        self.name = self.etabs.connect_to_existing_file()
+
+        self.wellcome.run_btn.setEnabled(True)
+
+    def run_etabs(self):
+
+        if self.etabs.get_case_statuse == "finished":
+            self.main_view()
+        else:
+            self.wellcome.run_status.setText("Run...")
             self.etabs.run_file()
+            self.main_view()
+
+    def main_view(self):
+        self.view = UI(self)
+        self.view.show()
+        self.view.driftbtn.clicked.connect(self.toggle_window)
+        self.drift_control = drift_control.ETABSDrift()
+        self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
+        self.etabs_load = list(self.etabs.get_load_cases())
+        self.get_file_detaile()
+        self.show_info()
+
 
     def get_file_detaile(self) -> None:
 
