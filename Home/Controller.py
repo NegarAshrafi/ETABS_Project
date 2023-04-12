@@ -1,4 +1,5 @@
 from pathlib import Path
+import time
 import Home.Model as etabs
 from ETABS_Project.Home.Wellcome_View import WellcomeWindow
 
@@ -41,25 +42,31 @@ class ETABS:
             print('')
         else:
             self.name = ame
-            self.show_info()
-            self.get_file_detaile()
+            # self.show_info()
+            # self.get_file_detaile()
             self.etabs = etabs.EtabsModel(self.name)
             self.etabs.open_file()
         self.wellcome.run_btn.setEnabled(True)
     
     def connect_etabs(self):
         self.name = self.etabs.connect_to_existing_file()
+        print(self.name)
 
         self.wellcome.run_btn.setEnabled(True)
 
     def run_etabs(self):
 
+        print(self.etabs.get_case_statuse)
         if self.etabs.get_case_statuse == "finished":
             self.main_view()
         else:
             self.wellcome.run_status.setText("Run...")
             self.etabs.run_file()
             self.main_view()
+            self.wellcome.run_status.setText(f'{self.name} Analyze Complete')
+            time.sleep(3)
+            self.wellcome.hide()
+
 
     def main_view(self):
         self.view = UI(self)
@@ -70,6 +77,7 @@ class ETABS:
         self.etabs_load = list(self.etabs.get_load_cases())
         self.get_file_detaile()
         self.show_info()
+        self.view.clsbtn.clicked.connect(lambda: self.wellcome.show())
 
 
     def get_file_detaile(self) -> None:
@@ -88,6 +96,7 @@ class ETABS:
             with open("./Temp/model_info.json", "w+") as fp:
                 json.dump(modelinfo, fp)
             self.view.statuslabel.setText(f'Connected to:  {modelname}')
+            self.wellcome.status_lbl.setText(f'Connected to:  {modelname}')
         except TypeError:
             pass
 

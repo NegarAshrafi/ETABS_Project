@@ -20,21 +20,16 @@ class EtabsModel:
         """ If an Etabs file is in the process this method will connect the app to that and return the path of its file"""
         try:
             self.myETABSObject = comtypes.client.GetActiveObject("CSI.ETABS.API.ETABSObject")
-            self.success = True
             self.SapModel = self.myETABSObject.SapModel
 
         except (OSError, comtypes.COMError):
             self.success = False
-
             # sys.exit(-1)
             if self.myETABSObject is None:
-                print('helper sakhyam')
                 helper = comtypes.client.CreateObject('ETABSv1.Helper')
-                print(f'helper is {helper}')
                 helper = helper.QueryInterface(comtypes.gen.ETABSv1.cHelper)
 
             if hasattr(helper, 'GetObjectProcess'):
-                print('helperam attr dare')
                 try:
                     import psutil
                 except ImportError:
@@ -51,7 +46,6 @@ class EtabsModel:
                         break
 
                 if pid:
-                    print('pid daram')
                     self.myETABSObject = helper.GetObjectProcess("CSI.ETABS.API.ETABSObject", pid)
                     self.success = True
         self.SapModel = self.myETABSObject.SapModel

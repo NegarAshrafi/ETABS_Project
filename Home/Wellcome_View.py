@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog
 from PyQt6.QtCore import pyqtSlot, Qt
 from PyQt6.QtGui import QCursor
+from pathlib import Path
 
 
 class WellcomeWindow(QWidget):
@@ -8,7 +9,7 @@ class WellcomeWindow(QWidget):
     def __init__(self, etabs):
         super().__init__()
 
-        self.setGeometry(200, 200, 500, 900)
+        self.setGeometry(300, 300, 300, 500)
         self.setWindowTitle("ETABS API")
 
         # main layout
