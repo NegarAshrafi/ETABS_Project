@@ -30,6 +30,9 @@ class ETABSDrift:
 
         self.driftload = self.window.load_case_list.currentItem()
         self.selected_load = self.driftload.text()
+        self.window.drift_result_rbtn.setEnabled(True)
+        self.window.displacement_result_rbtn.setEnabled(True)
+        self.window.drift_result_rbtn.toggled.connect(self.window.radio_button)
         selected_table = self.window.drift_or_dis
         story_drifts_table = etabsobj.get_data_table_outputs(table_key=selected_table)
         self.window.load_label.setText(f'Load: {self.selected_load}')
@@ -73,8 +76,13 @@ class ETABSDrift:
 
         # replace Nan values with zero
         self.load_table_xy.fillna(0, inplace=True)
-        self.temp = self.load_table_xy
+
+        # add basement floor to list
+        self.load_table_xy.loc[len(self.load_table_xy.index)] = ["Bs", 0, 0]
         self.row_no = self.load_table_xy['X'].size
+        self.load_table_xy = self.load_table_xy.iloc[::-1]
+        self.temp = self.load_table_xy
+        # self.row_no = self.load_table_xy['X'].size
 
         if load_table is None:
             self.error_on_drifttable()
@@ -91,6 +99,7 @@ class ETABSDrift:
             self.graph()
 
         self.window.result_table.setHorizontalHeaderLabels(['Story', self.tableitem + "\nX", self.tableitem + "\nY"])
+        self.window.maxdrift_lbl.setText(self.msg)
 
     def error_on_drifttable(self):
 
@@ -100,7 +109,7 @@ class ETABSDrift:
     def graph(self):
 
         # get int from str column
-        self.load_table_xy = self.load_table_xy.iloc[::-1]
+        # self.load_table_xy = self.load_table_xy.iloc[::-1]
         lstring = self.load_table_xy['Story'].tolist()
         dict_lstring = list(dict(enumerate(lstring)).keys())
         valuelistx = self.load_table_xy['X'].tolist()
@@ -112,7 +121,7 @@ class ETABSDrift:
         # transpose table
         datax = pd.DataFrame(np.array([valuelistx, dict_lstring], dtype=float)).T.to_numpy()
         datay = pd.DataFrame(np.array([valuelisty, dict_lstring], dtype=float)).T.to_numpy()
-        datalimit = np.array([[0.002, x] for x in range(self.row_no)]) if self.tableitem == "Drift" else np.array([[0, 0], [self.height * 0.02, self.row_no]])
+        datalimit = np.array([[0.002, x] for x in range(self.row_no-1)]) if self.tableitem == "Drift" else np.array([[0, 0], [self.height * 0.002, self.row_no-1]])
 
         penx = pg.mkPen({'color': "g", 'width': 3})
         peny = pg.mkPen({'color': "b", 'width': 3})
@@ -135,7 +144,7 @@ class ETABSDrift:
         self.window.export_btn.setEnabled(True)
         self.window.export_btn.setText('Report')
 
-        self.msg = f' Load Case = {self.selected_load}\nMax {self.tableitem} X = {self.maxdriftx}\nMax {self.tableitem} Y = {self.maxdrifty}'
+        self.msg = f' LC: {self.selected_load}: ->  Max {self.tableitem} X = {self.maxdriftx},  Max {self.tableitem} Y = {self.maxdrifty}'
 
     def export_drift_xls(self):
 

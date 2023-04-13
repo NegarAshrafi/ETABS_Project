@@ -23,7 +23,9 @@ class ETABS:
 
         self.wellcome.new_file_btn.clicked.connect(self.open_etabs)
         self.wellcome.connect_btn.clicked.connect(self.connect_etabs)
-        self.wellcome.run_btn.clicked.connect(self.run_etabs)
+        # self.wellcome.run_btn.clicked.connect(self.run_etabs)
+        self.wellcome.drift_btn.clicked.connect(self.toggle_window)
+        self.etabs_load = list(self.etabs.get_load_cases())
 
         # self.view.connect_btn.clicked.connect(self.open_etabs)
         
@@ -46,57 +48,64 @@ class ETABS:
             # self.get_file_detaile()
             self.etabs = etabs.EtabsModel(self.name)
             self.etabs.open_file()
-        self.wellcome.run_btn.setEnabled(True)
+        # self.wellcome.run_btn.setEnabled(True)
+        self.wellcome.setWindowTitle(f"ETABS API-{self.name}")
+
     
     def connect_etabs(self):
         self.name = self.etabs.connect_to_existing_file()
         print(self.name)
 
-        self.wellcome.run_btn.setEnabled(True)
+        # self.wellcome.run_btn.setEnabled(True)
+        self.wellcome.setWindowTitle(f"ETABS API-  {str(Path(os.path.basename(self.name)))}")
+        self.drift_control = drift_control.ETABSDrift()
+        # self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
+        self.etabs_load = list(self.etabs.get_load_cases())
+        self.get_file_detaile()
+        self.show_info()
+        # self.view.clsbtn.clicked.connect(lambda: self.wellcome.show())
 
     def run_etabs(self):
 
         print(self.etabs.get_case_statuse)
         if self.etabs.get_case_statuse == "finished":
-            self.main_view()
+            print('is runed previousley')
         else:
-            self.wellcome.run_status.setText("Run...")
             self.etabs.run_file()
-            self.main_view()
-            self.wellcome.run_status.setText(f'{self.name} Analyze Complete')
             time.sleep(3)
             self.wellcome.hide()
+        
 
 
-    def main_view(self):
-        self.view = UI(self)
-        self.view.show()
-        self.view.driftbtn.clicked.connect(self.toggle_window)
-        self.drift_control = drift_control.ETABSDrift()
-        self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
-        self.etabs_load = list(self.etabs.get_load_cases())
-        self.get_file_detaile()
-        self.show_info()
-        self.view.clsbtn.clicked.connect(lambda: self.wellcome.show())
+    # def main_view(self):
+    #     self.view = UI(self)
+    #     self.view.show()
+        
+    #     self.drift_control = drift_control.ETABSDrift()
+    #     self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
+    #     self.etabs_load = list(self.etabs.get_load_cases())
+    #     self.get_file_detaile()
+    #     self.show_info()
+    #     self.view.clsbtn.clicked.connect(lambda: self.wellcome.show())
 
 
     def get_file_detaile(self) -> None:
 
         try:
             modelpath = str(Path(self.name))
-            modelname = str(Path(os.path.basename(self.name)))
-            etabspath = str(Path(etabs.EtabsModel(self.name).ProgramPath))
+            self.modelname = str(Path(os.path.basename(self.name)))
+            self.etabspath = str(Path(etabs.EtabsModel(self.name).ProgramPath))
             self.folderpath = str(Path(os.path.dirname(self.name)))
             modelinfo = {
-                "Model Name": modelname,
+                "Model Name": self.modelname,
                 "Model Path": modelpath,
-                "ETABS Path": etabspath,
+                "ETABS Path": self.etabspath,
                 "Folder Path": self.folderpath
             }
             with open("./Temp/model_info.json", "w+") as fp:
                 json.dump(modelinfo, fp)
-            self.view.statuslabel.setText(f'Connected to:  {modelname}')
-            self.wellcome.status_lbl.setText(f'Connected to:  {modelname}')
+            # self.drift_control.view.statuslabel.setText(f'Connected to:  {modelname}')
+            # self.wellcome.status_lbl.setText(f'Connected to:  {modelname}')
         except TypeError:
             pass
 
@@ -110,7 +119,9 @@ class ETABS:
                 datalist = []
                 for i, j in data.items():
                     datalist.append(f'{i}:   {j}\n')
-                self.view.preetabs.setText("".join(datalist))
+                # self.wellcome.preetabs.setText("".join(datalist))
+                self.wellcome.preetabs.setText(data["Model Path"])
+                self.wellcome.etabs_path.setText(data["ETABS Path"])
             else:
                 print('nist')
         # except: print('nashod')
@@ -123,7 +134,7 @@ class ETABS:
 
     def toggle_window(self, checked):
 
-        # self.drift_control = drift_control.ETABSDrift()
+        self.drift_control = drift_control.ETABSDrift()
         if self.drift_control.window.isVisible():
             self.drift_control.window.hide()
         else:
@@ -137,12 +148,13 @@ class ETABS:
         self.etabs.select_load_cases(fltrdloads)
         self.drift_control.window.export_btn.clicked.connect(lambda: self.drift_control.export_drift_xls())
         self.drift_control.window.load_case_list.itemClicked.connect(lambda: self.drift_control.drift_table(self.etabs))
-
+        self.drift_control.window.drift_result_rbtn.toggled.connect(lambda: self.drift_control.drift_table(self.etabs))
+        # self.drift_control.window.maxdrift_lbl.setText(self.drift_control.msg)
         # msg = str(self.drift_control.max_drift_label_text())
         # print(type(msg), msg)
         # self.view.preres.setText(msg)
 
-    def max_drift_label(self):
+    # def max_drift_label(self):
 
-        self.drift_control.window.hide()
-        self.view.preres.setText(self.drift_control.msg)
+    #     self.drift_control.window.hide()
+    #     self.drift_control.window.prelbl.setText(self.drift_control.msg)
