@@ -84,9 +84,6 @@ class ETABSDrift:
         self.load_table_xy.fillna(0, inplace=True)
 
         # add basement floor to list
-        print('...............................................')
-        print(len(self.load_table_xy.index))
-        print(self.load_table_xy)
         self.load_table_xy.loc[len(self.load_table_xy.index)] = ["Bs", 0, 0]
 
         self.row_no = self.load_table_xy['X'].size
