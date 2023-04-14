@@ -79,7 +79,6 @@ class DriftWindow(QWidget):
         self.result_table.setStyleSheet("font-size: 12px;""font-weight: bold;")
         self.result_table.verticalHeader().setVisible(False)
         self.result_table.setStyleSheet("background-color : white;")
-        self.result_table.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         hbox.addWidget(self.result_table)
         main_vbox.addLayout(hbox)
 

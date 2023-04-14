@@ -24,7 +24,7 @@ class ETABS:
         self.wellcome.new_file_btn.clicked.connect(self.open_etabs)
         self.wellcome.connect_btn.clicked.connect(self.connect_etabs)
         # self.wellcome.run_btn.clicked.connect(self.run_etabs)
-        self.wellcome.drift_btn.clicked.connect(self.toggle_window)
+        self.wellcome.run_drift_btn.clicked.connect(self.toggle_window)
         self.etabs_load = list(self.etabs.get_load_cases())
 
         # self.view.connect_btn.clicked.connect(self.open_etabs)
@@ -39,43 +39,55 @@ class ETABS:
     # @pyqtSlot()
     def open_etabs(self) -> None:
 
-        ame = self.wellcome.open_dialog(self.folderpath)
-        if ame is False:
+        name = self.wellcome.open_dialog(self.folderpath)
+        if name is False:
             print('')
         else:
-            self.name = ame
+            self.name = name
             # self.show_info()
             # self.get_file_detaile()
             self.etabs = etabs.EtabsModel(self.name)
             self.etabs.open_file()
         # self.wellcome.run_btn.setEnabled(True)
         self.wellcome.setWindowTitle(f"ETABS API-{self.name}")
+        self.connect_etabs()
 
-    
+
     def connect_etabs(self):
-        self.name = self.etabs.connect_to_existing_file()
-        print(self.name)
 
-        # self.wellcome.run_btn.setEnabled(True)
-        self.wellcome.setWindowTitle(f"ETABS API-  {str(Path(os.path.basename(self.name)))}")
-        self.drift_control = drift_control.ETABSDrift()
-        # self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
-        self.etabs_load = list(self.etabs.get_load_cases())
-        self.get_file_detaile()
-        self.show_info()
-        # self.view.clsbtn.clicked.connect(lambda: self.wellcome.show())
+        try:
+            self.name = self.etabs.connect_to_existing_file()
+            print('try')
+            # self.wellcome.run_btn.setEnabled(True)
+            self.wellcome.setWindowTitle(f"ETABS API-  {str(Path(os.path.basename(self.name)))}")
+            self.drift_control = drift_control.ETABSDrift()
+            # self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
+            self.etabs_load = list(self.etabs.get_load_cases())
+            self.get_file_detaile()
+            self.show_info()
+            self.check_run()
+            # self.view.clsbtn.clicked.connect(lambda: self.wellcome.show())
+
+        except AttributeError:
+            print('wrror')
+            self.wellcome.active_file()
+
+    def check_run(self):
+        msg = str(self.etabs.check_run())
+        self.check_msg = 'drift check'
+        if msg == "run_needed":
+            self.check_msg = 'run'
+            self.wellcome.run_drift_btn.setText('Run')
+            
+        self.wellcome.run_drift_btn.setEnabled(True)
+
 
     def run_etabs(self):
 
-        print(self.etabs.get_case_statuse)
-        if self.etabs.get_case_statuse == "finished":
-            print('is runed previousley')
-        else:
-            self.etabs.run_file()
-            time.sleep(3)
-            self.wellcome.hide()
-        
-
+        self.check_msg = self.etabs.run_file()
+        # self.check_msg = self.etabs.check_msg
+        self.wellcome.run_drift_btn.setText('Check Drift')
+        self.wellcome.run_drift_btn.setEnabled(True)
 
     # def main_view(self):
     #     self.view = UI(self)
@@ -134,12 +146,15 @@ class ETABS:
 
     def toggle_window(self, checked):
 
-        self.drift_control = drift_control.ETABSDrift()
-        if self.drift_control.window.isVisible():
-            self.drift_control.window.hide()
+        if self.check_msg == 'run':
+            self.run_etabs()
         else:
-            self.drift_control.window.show()
-        self.drift_check()
+            self.drift_control = drift_control.ETABSDrift()
+            if self.drift_control.window.isVisible():
+                self.drift_control.window.hide()
+            else:
+                self.drift_control.window.show()
+            self.drift_check()
 
     def drift_check(self):
 

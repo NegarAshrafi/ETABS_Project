@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog, QStyle
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog, QStyle, QMessageBox, QProgressBar
 from PyQt6.QtCore import pyqtSlot, Qt, QMargins
 from PyQt6.QtGui import QCursor, QFont, QIcon
 from pathlib import Path
@@ -11,11 +11,9 @@ class WellcomeWindow(QWidget):
 
         self.setGeometry(200, 200, 1000, 500)
         self.setWindowTitle("ETABS API")
-        self.setWindowIcon(QIcon('ETABS_Project/utilities/logo2.png'))
+        self.setWindowIcon(QIcon('ETABS_Project/utilities/ETABS1.png'))
         self.setStyleSheet("background-color: rgb(255,250,220); border:1px solid rgb(170, 230, 190); ")
 
-        
-        
         # main layout
         main_vbox = QVBoxLayout()
         self.setLayout(main_vbox)
@@ -27,7 +25,6 @@ class WellcomeWindow(QWidget):
         self.preetabs.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.preetabs.setFixedHeight(20)
         self.preetabs.setStyleSheet("background-color: lightblue;")
-        self.preetabs.setStyleSheet("<tag title=")
         hbox.addWidget(self.preetabs)
         main_vbox.addLayout(hbox)
 
@@ -64,17 +61,29 @@ class WellcomeWindow(QWidget):
         hbox.addStretch(2)
         main_vbox.addLayout(hbox)
 
+        # # progress bar
+        # hbox = QHBoxLayout()
+        # hbox.addStretch(1)
+        # self.run_btn =QPushButton()
+        # self.run_btn.setMinimumHeight(90)
+        # self.run_btn.setMinimumWidth(130)
+        # self.run_btn.setEnabled(False)
+        # hbox.addWidget(self.run_btn)
+        # hbox.addStretch(1)
+        # main_vbox.addLayout(hbox)
+
         # 2nd row
         hbox = QHBoxLayout()
         hbox2 = QHBoxLayout()
-        self.drift_btn = QPushButton('Check Drift')
-        self.drift_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.drift_btn.setMinimumHeight(60)
-        self.drift_btn.setMinimumWidth(90)
+        self.run_drift_btn = QPushButton('Check Drift')
+        self.run_drift_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.run_drift_btn.setMinimumHeight(60)
+        self.run_drift_btn.setMinimumWidth(90)
+        self.run_drift_btn.setEnabled(False)
         pixmapi = QStyle.StandardPixmap.SP_MediaPlay
         icon = self.style().standardIcon(pixmapi)
-        self.drift_btn.setIcon(icon)
-        hbox2.addWidget(self.drift_btn)
+        self.run_drift_btn.setIcon(icon)
+        hbox2.addWidget(self.run_drift_btn)
         hbox2.setAlignment(Qt.AlignmentFlag.AlignCenter)
         hbox.addLayout(hbox2)
         main_vbox.addLayout(hbox)
@@ -129,3 +138,14 @@ class WellcomeWindow(QWidget):
 
         else:
             return False
+
+    def active_file(self):
+
+        self.msg_box = QMessageBox(self)
+        self.msg_box.setWindowTitle("Warning")
+        self.msg_box.setText("There is not any Active ETABS File")
+        self.msg_box.Icon.Warning
+        btn = self.msg_box.exec()
+
+        if btn == QMessageBox.StandardButton.Retry:
+            pass

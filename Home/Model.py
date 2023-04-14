@@ -1,4 +1,5 @@
 import sys
+import time
 import comtypes.client
 from pathlib import Path
 import pandas as pd
@@ -75,22 +76,35 @@ class EtabsModel:
         # create new blank model
         self.SapModel.File.OpenFile(str(self.ModelPath))
 
-    def run_file(self):
+    def check_run(self) -> str:
+        case_status = self.get_case_status()
+        templist = [a for a in case_status if a == 4]
+        if len(case_status) > len(templist):
+            return "run_needed"
+
+    def run_file(self) -> bool:
+        """
+        check if all loads analyze are complete returns finished, else starts analyze and when complete returns finished"""
         # self.SapModel.SetModelIsLocked(False)
         # run model (this will create the analysis model)
         ret = self.SapModel.Analyze.RunAnalysis()
-        print(ret)
-        self.run_msg = "Run Anaysis is Completed"
-        return self.run_msg
+        check_msg = 'analysis is completed'
+        return check_msg
 
-    def get_case_statuse(self) -> str:
-        self.case_status = self.SapModel.Analyze.GetCaseStatus()[2]
-        status = {1: "Not run",
+        # print(ret)
+        # self.run_msg = "Run Anaysis is Completed"
+        # return self.run_msg
+
+    def get_case_status(self) -> tuple:
+        """ meaning of numbers at self. case_status:
+            status = {1: "Not run",
                     2: "Could not start",
                     3: "Not finished",
-                    4: "Finished"}
-        return status[self.case_status]
-
+                    4: "Finished"} 
+                    """
+        self.case_status = self.SapModel.Analyze.GetCaseStatus()[2]
+        return self.case_status
+        
     def get_file_path(self):
         self.path = Path(self.SapModel.GetModelFilename()).parent
         return self.path

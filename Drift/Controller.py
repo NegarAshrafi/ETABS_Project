@@ -133,7 +133,7 @@ class ETABSDrift:
         self.drift_graph = self.window.graphwin.addPlot()
         self.drift_graph.addLegend()
         self.drift_graph.addItem
-        self.drift_graph.showGrid(x=True, y=True)
+        self.drift_graph.showGrid(x=True, y=True, alpha=0.5)
         self.drift_graph.setLabel('left', 'Story', units=None)
         self.drift_graph.setLabel('bottom', self.tableitem)
         self.drift_graph.setAxisItems(axisItems={'left': stringaxis})
