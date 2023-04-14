@@ -26,7 +26,16 @@ class ETABSDrift:
             item = QListWidgetItem(value)
             self.window.load_case_list.addItem(item)
 
-    def drift_table(self, etabsobj):
+    def get_drift_table(self, etabsobj):
+        
+        self.story_drifts_table = etabsobj.get_data_table_outputs(table_key='Story Drifts')
+        self.story_displacement_table = etabsobj.get_data_table_outputs(table_key='Story Max Over Avg Displacements')
+        story_definitions_table = etabsobj.get_data_table_outputs(table_key="Story Definitions")
+        
+        # project total height
+        self.height = story_definitions_table['Height'].astype(float).sum()
+
+    def drift_table(self):
 
         self.driftload = self.window.load_case_list.currentItem()
         self.selected_load = self.driftload.text()
@@ -34,22 +43,21 @@ class ETABSDrift:
         self.window.displacement_result_rbtn.setEnabled(True)
         self.window.drift_result_rbtn.toggled.connect(self.window.radio_button)
         selected_table = self.window.drift_or_dis
-        story_drifts_table = etabsobj.get_data_table_outputs(table_key=selected_table)
         self.window.load_label.setText(f'Load: {self.selected_load}')
+        # drift_table = self.story_drift_table
         # query desiered columns
-        load_drift = story_drifts_table[story_drifts_table.OutputCase == self.selected_load]
-
-        story_definitions_table = etabsobj.get_data_table_outputs(table_key="Story Definitions")
         
-        # project total height
-        self.height = story_definitions_table['Height'].astype(float).sum()
+
+       
 
         if selected_table == 'Story Drifts':
+            load_drift = self.story_drifts_table[self.story_drifts_table.OutputCase == self.selected_load]
             load_table = load_drift[['Story', 'Direction', 'Drift']]
             kvalue = "Drift"
             self.tableitem = 'Drift'
         elif selected_table == 'Story Max Over Avg Displacements':
-            load_table = load_drift[['Story', 'Direction', 'Maximum']]
+            load_displacement = self.story_displacement_table[self.story_displacement_table.OutputCase == self.selected_load]
+            load_table = load_displacement[['Story', 'Direction', 'Maximum']]
             kvalue = "Maximum"
             self.tableitem = 'Displacement'
 

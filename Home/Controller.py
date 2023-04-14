@@ -154,6 +154,7 @@ class ETABS:
                 self.drift_control.window.hide()
             else:
                 self.drift_control.window.show()
+            self.drift_control.get_drift_table(self.etabs)
             self.drift_check()
 
     def drift_check(self):
@@ -162,8 +163,8 @@ class ETABS:
         self.drift_control.load_window(fltrdloads)
         self.etabs.select_load_cases(fltrdloads)
         self.drift_control.window.export_btn.clicked.connect(lambda: self.drift_control.export_drift_xls())
-        self.drift_control.window.load_case_list.itemClicked.connect(lambda: self.drift_control.drift_table(self.etabs))
-        self.drift_control.window.drift_result_rbtn.toggled.connect(lambda: self.drift_control.drift_table(self.etabs))
+        self.drift_control.window.load_case_list.itemClicked.connect(lambda: self.drift_control.drift_table())
+        self.drift_control.window.drift_result_rbtn.toggled.connect(lambda: self.drift_control.drift_table())
         # self.drift_control.window.maxdrift_lbl.setText(self.drift_control.msg)
         # msg = str(self.drift_control.max_drift_label_text())
         # print(type(msg), msg)
