@@ -1,11 +1,8 @@
-from pathlib import Path
-import time
-import Home.Model as etabs
-from ETABS_Project.Home.Wellcome_View import WellcomeWindow
-
-from Home.View import UI
 import os
 import json
+from pathlib import Path
+import Home.Model as etabs
+from ETABS_Project.Home.Wellcome_View import WellcomeWindow
 import Drift.Controller as drift_control
 
 
@@ -16,27 +13,16 @@ class ETABS:
         super().__init__()
         self.wellcome = WellcomeWindow(self)
         self.wellcome.show()
-        # self.view = UI(self)
         self.etabs = etabs.EtabsModel(self)
         self.drift_control = drift_control.ETABSDrift()
         self.folderpath = 'D:/'
 
         self.wellcome.new_file_btn.clicked.connect(self.open_etabs)
         self.wellcome.connect_btn.clicked.connect(self.connect_etabs)
-        # self.wellcome.run_btn.clicked.connect(self.run_etabs)
+
         self.wellcome.run_drift_btn.clicked.connect(self.toggle_window)
         self.etabs_load = list(self.etabs.get_load_cases())
 
-        # self.view.connect_btn.clicked.connect(self.open_etabs)
-        
-
-        # self.name = self.etabs.connect_to_exis
-
-        # if self.name:
-        #     self.etabs.run_file
-
-
-    # @pyqtSlot()
     def open_etabs(self) -> None:
 
         name = self.wellcome.open_dialog(self.folderpath)
@@ -44,14 +30,11 @@ class ETABS:
             print('')
         else:
             self.name = name
-            # self.show_info()
-            # self.get_file_detaile()
             self.etabs = etabs.EtabsModel(self.name)
             self.etabs.open_file()
         # self.wellcome.run_btn.setEnabled(True)
         self.wellcome.setWindowTitle(f"ETABS API-{self.name}")
         self.connect_etabs()
-
 
     def connect_etabs(self):
 
@@ -81,25 +64,11 @@ class ETABS:
             
         self.wellcome.run_drift_btn.setEnabled(True)
 
-
     def run_etabs(self):
 
         self.check_msg = self.etabs.run_file()
-        # self.check_msg = self.etabs.check_msg
         self.wellcome.run_drift_btn.setText('Check Drift')
         self.wellcome.run_drift_btn.setEnabled(True)
-
-    # def main_view(self):
-    #     self.view = UI(self)
-    #     self.view.show()
-        
-    #     self.drift_control = drift_control.ETABSDrift()
-    #     self.drift_control.window.cls_btn.clicked.connect(self.max_drift_label)
-    #     self.etabs_load = list(self.etabs.get_load_cases())
-    #     self.get_file_detaile()
-    #     self.show_info()
-    #     self.view.clsbtn.clicked.connect(lambda: self.wellcome.show())
-
 
     def get_file_detaile(self) -> None:
 
@@ -116,8 +85,6 @@ class ETABS:
             }
             with open("./Temp/model_info.json", "w+") as fp:
                 json.dump(modelinfo, fp)
-            # self.drift_control.view.statuslabel.setText(f'Connected to:  {modelname}')
-            # self.wellcome.status_lbl.setText(f'Connected to:  {modelname}')
         except TypeError:
             pass
 
@@ -160,7 +127,6 @@ class ETABS:
     def drift_check(self):
 
         fltrdloads = list(filter(lambda x: x.startswith(("W", "EQ", "SPEC")), self.etabs_load))
-        self.drift_control.load_window(fltrdloads)
         self.etabs.select_load_cases(fltrdloads)
         self.drift_control.window.export_btn.clicked.connect(lambda: self.drift_control.export_drift_xls())
         self.drift_control.window.load_case_list.itemClicked.connect(lambda: self.drift_control.drift_table())

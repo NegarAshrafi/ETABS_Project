@@ -77,6 +77,8 @@ class EtabsModel:
         self.SapModel.File.OpenFile(str(self.ModelPath))
 
     def check_run(self) -> str:
+        """
+        check if all load cases are analyzed or not and return 'run_needed' string if it needs run"""
         case_status = self.get_case_status()
         templist = [a for a in case_status if a == 4]
         if len(case_status) > len(templist):
@@ -85,15 +87,11 @@ class EtabsModel:
     def run_file(self) -> bool:
         """
         check if all loads analyze are complete returns finished, else starts analyze and when complete returns finished"""
-        # self.SapModel.SetModelIsLocked(False)
+
         # run model (this will create the analysis model)
         ret = self.SapModel.Analyze.RunAnalysis()
         check_msg = 'analysis is completed'
         return check_msg
-
-        # print(ret)
-        # self.run_msg = "Run Anaysis is Completed"
-        # return self.run_msg
 
     def get_case_status(self) -> tuple:
         """ meaning of numbers at self. case_status:
@@ -104,21 +102,24 @@ class EtabsModel:
                     """
         self.case_status = self.SapModel.Analyze.GetCaseStatus()[2]
         return self.case_status
-        
+
     def get_file_path(self):
+
         self.path = Path(self.SapModel.GetModelFilename()).parent
         return self.path
 
     def exit_file(self):
+
         try:
-            # self.SapModel.SetModelIsLocked(False)
             self.SapModel.ApplicationExit(False)
         except AttributeError:
             pass
+
         self.SapModel = None
         self.myETABSObject = None
 
     def get_load_cases(self) -> list:
+
         try:
             lcnames = self.SapModel.LoadCases.GetNameList(0, [])[1]
             return lcnames
@@ -134,7 +135,7 @@ class EtabsModel:
         """
         output is pandas DataFrame type. a data table just like Show Tables at Etabs
         """
-        # all_table = self.SapModel.DatabaseTables.GetAvailableTables()[1]
+
         GroupName = table_key
         FieldKeyList = []
         TableVersion = 0

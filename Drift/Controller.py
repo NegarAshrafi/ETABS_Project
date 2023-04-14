@@ -3,7 +3,6 @@ from Drift.View import DriftWindow
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
-import pyqtgraph.exporters
 from openpyxl import Workbook
 from openpyxl.worksheet.table import Table, TableStyleInfo
 from openpyxl.formatting.rule import ColorScaleRule
@@ -27,11 +26,13 @@ class ETABSDrift:
             self.window.load_case_list.addItem(item)
 
     def get_drift_table(self, etabsobj):
-        
+
         self.story_drifts_table = etabsobj.get_data_table_outputs(table_key='Story Drifts')
         self.story_displacement_table = etabsobj.get_data_table_outputs(table_key='Story Max Over Avg Displacements')
         story_definitions_table = etabsobj.get_data_table_outputs(table_key="Story Definitions")
-        
+        loads = set(self.story_drifts_table.OutputCase)
+        self.load_window(list(loads))
+
         # project total height
         self.height = story_definitions_table['Height'].astype(float).sum()
 
@@ -44,11 +45,8 @@ class ETABSDrift:
         self.window.drift_result_rbtn.toggled.connect(self.window.radio_button)
         selected_table = self.window.drift_or_dis
         self.window.load_label.setText(f'Load: {self.selected_load}')
-        # drift_table = self.story_drift_table
-        # query desiered columns
-        
 
-       
+        # query desiered columns
 
         if selected_table == 'Story Drifts':
             load_drift = self.story_drifts_table[self.story_drifts_table.OutputCase == self.selected_load]
@@ -76,7 +74,7 @@ class ETABSDrift:
                 self.load_table_xy = self.load_table_xy[['Story', 'X', 'Y']]
 
             else:
-                self.load_table_xy = pd.DataFrame(np.zeros([8, 3]), columns=('Story', 'X', 'Y'))
+                self.load_table_xy = pd.DataFrame(np.zeros([self.row_no - 1, 2]), columns=('Story', 'X'))
                 load_table = None
 
         # reset index change previous index to 0-1-2-3-.... and use previouse index as a column
@@ -86,7 +84,11 @@ class ETABSDrift:
         self.load_table_xy.fillna(0, inplace=True)
 
         # add basement floor to list
+        print('...............................................')
+        print(len(self.load_table_xy.index))
+        print(self.load_table_xy)
         self.load_table_xy.loc[len(self.load_table_xy.index)] = ["Bs", 0, 0]
+
         self.row_no = self.load_table_xy['X'].size
         self.load_table_xy = self.load_table_xy.iloc[::-1]
         self.temp = self.load_table_xy
@@ -129,7 +131,7 @@ class ETABSDrift:
         # transpose table
         datax = pd.DataFrame(np.array([valuelistx, dict_lstring], dtype=float)).T.to_numpy()
         datay = pd.DataFrame(np.array([valuelisty, dict_lstring], dtype=float)).T.to_numpy()
-        datalimit = np.array([[0.002, x] for x in range(self.row_no-1)]) if self.tableitem == "Drift" else np.array([[0, 0], [self.height * 0.002, self.row_no-1]])
+        datalimit = np.array([[0.002, x] for x in range(self.row_no - 1)]) if self.tableitem == "Drift" else np.array([[0, 0], [self.height * 0.002, self.row_no - 1]])
 
         penx = pg.mkPen({'color': "g", 'width': 3})
         peny = pg.mkPen({'color': "b", 'width': 3})

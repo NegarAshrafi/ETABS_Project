@@ -1,5 +1,5 @@
-from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog, QStyle, QMessageBox, QProgressBar
-from PyQt6.QtCore import pyqtSlot, Qt, QMargins
+from PyQt6.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QFileDialog, QStyle, QMessageBox
+from PyQt6.QtCore import pyqtSlot, Qt
 from PyQt6.QtGui import QCursor, QFont, QIcon
 from pathlib import Path
 
@@ -45,7 +45,7 @@ class WellcomeWindow(QWidget):
         hbox2.addWidget(self.new_file_btn)
         hbox2.setAlignment(Qt.AlignmentFlag.AlignBottom)
         hbox.addLayout(hbox2)
-        
+
         hbox2 = QHBoxLayout()
         self.connect_btn = QPushButton('Connect to\nActive File')
         self.connect_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -60,17 +60,6 @@ class WellcomeWindow(QWidget):
         hbox.addLayout(hbox2)
         hbox.addStretch(2)
         main_vbox.addLayout(hbox)
-
-        # # progress bar
-        # hbox = QHBoxLayout()
-        # hbox.addStretch(1)
-        # self.run_btn =QPushButton()
-        # self.run_btn.setMinimumHeight(90)
-        # self.run_btn.setMinimumWidth(130)
-        # self.run_btn.setEnabled(False)
-        # hbox.addWidget(self.run_btn)
-        # hbox.addStretch(1)
-        # main_vbox.addLayout(hbox)
 
         # 2nd row
         hbox = QHBoxLayout()
@@ -95,26 +84,10 @@ class WellcomeWindow(QWidget):
         self.etabs_path.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.etabs_path.setMaximumHeight(20)
         hbox.addWidget(self.etabs_path)
-        hbox.setContentsMargins(0,0,0,0)
+        hbox.setContentsMargins(0, 0, 0, 0)
         self.etabs_path.setStyleSheet(u"background: lightblue")
         main_vbox.setContentsMargins(0, 0, 0, 0)
         main_vbox.addLayout(hbox)
-
-        # # 4th row
-        # hbox = QHBoxLayout()
-        # self.run_btn = QPushButton('Run')
-        # self.run_btn.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        # self.run_btn.setFixedSize(80, 50)
-        # self.run_btn.setEnabled(False)
-        # hbox.addWidget(self.run_btn)
-        # main_vbox.addLayout(hbox)
-
-        # # 6th row
-        # hbox = QHBoxLayout()
-        # self.run_status = QLabel('Run Status...')
-        # self.run_status.setAlignment(Qt.AlignmentFlag.AlignBottom)
-        # hbox.addWidget(self.run_status)
-        # main_vbox.addLayout(hbox)
 
     @pyqtSlot()
     def open_dialog(self, last_path) -> str:
@@ -130,7 +103,7 @@ class WellcomeWindow(QWidget):
             filepathname = dialog.selectedFiles()
             self.name = Path(filepathname[0])
 
-            if self.name == None:
+            if self.name is None:
                 return False
             else:
                 print(f'in open dialog of view self.name is : {self.name}')
